@@ -1,9 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 
+// Public route - Homepage
 Route::get('/', function () {
     return view('welcome');
+});
+
+// Profile routes - accessible by ALL authenticated user types
+Route::middleware(['auth:admin,teacher,student,old_student'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 });
 
 // Admin Dashboard
@@ -27,4 +36,5 @@ Route::middleware(['auth:student,old_student'])->prefix('student')->name('studen
     })->name('dashboard');
 });
 
+// Auth routes (login, logout, etc.)
 require __DIR__.'/auth.php';

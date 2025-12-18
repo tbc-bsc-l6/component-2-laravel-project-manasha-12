@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\MultiGuardLoginController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+// Guest routes (login page)
 Route::middleware('guest')->group(function () {
     Route::get('login', [MultiGuardLoginController::class, 'create'])
         ->name('login');
@@ -11,7 +12,8 @@ Route::middleware('guest')->group(function () {
     Route::post('login', [MultiGuardLoginController::class, 'store']);
 });
 
-Route::middleware('auth')->group(function () {
+// Authenticated routes - MUST specify all guards
+Route::middleware(['auth:admin,teacher,student,old_student'])->group(function () {
     Route::post('logout', [MultiGuardLoginController::class, 'destroy'])
         ->name('logout');
     
