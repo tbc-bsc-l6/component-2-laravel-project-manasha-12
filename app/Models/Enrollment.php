@@ -25,7 +25,6 @@ class Enrollment extends Model
     public function student()
     {
         // This can return either Student or OldStudent
-        // We'll handle this polymorphically
         return $this->belongsTo(Student::class, 'student_id')
             ->orWhere(function($query) {
                 return $this->belongsTo(OldStudent::class, 'student_id');
