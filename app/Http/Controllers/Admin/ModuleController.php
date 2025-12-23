@@ -116,7 +116,7 @@ class ModuleController extends Controller
     // Show module details with enrollments
     public function show(Module $module)
     {
-        $module->load(['activeEnrollments.user', 'teachers']);
+        $module->load(['activeEnrollments.student', 'teachers']);
         $availableTeachers = Teacher::whereNotIn('id', $module->teachers->pluck('id'))->get();
         
         return view('admin.modules.show', compact('module', 'availableTeachers'));

@@ -127,7 +127,7 @@
 
 <!-- Dark Mode Styles -->
 <style>
-    /* CSS Variables for Dark Mode */
+    /* CSS Variables for Dark Mode - DARKER BLACK */
     :root {
         --bg-primary: #ffffff;
         --bg-secondary: #f9fafb;
@@ -144,51 +144,76 @@
     }
 
     [data-theme="dark"] {
-        --bg-primary: #0a0a0a;
-        --bg-secondary: #111827;
-        --bg-tertiary: #1f2937;
-        --text-primary: #f9fafb;
-        --text-secondary: #d1d5db;
-        --text-tertiary: #9ca3af;
-        --border-color: #374151;
-        --card-bg: #1f2937;
-        --nav-bg: #111827;
-        --nav-text: #d1d5db;
-        --input-bg: #1f2937;
-        --input-border: #374151;
+        --bg-primary: #000000;          /* Pure black background */
+        --bg-secondary: #0a0a0a;        /* Slightly lighter black */
+        --bg-tertiary: #1a1a1a;         /* Card/input backgrounds */
+        --text-primary: #ffffff;        /* Pure white text */
+        --text-secondary: #d1d5db;      /* Light gray text */
+        --text-tertiary: #9ca3af;       /* Medium gray text */
+        --border-color: #2a2a2a;        /* Dark borders */
+        --card-bg: #1a1a1a;             /* Card background */
+        --nav-bg: #0a0a0a;              /* Navigation background */
+        --nav-text: #d1d5db;            /* Navigation text */
+        --input-bg: #1a1a1a;            /* Input background */
+        --input-border: #2a2a2a;        /* Input border */
     }
 
     /* Smooth transitions */
     * {
-        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;
     }
 
     body {
-        background-color: var(--bg-secondary);
-        color: var(--text-primary);
+        background-color: var(--bg-secondary) !important;
+        color: var(--text-primary) !important;
     }
 
-    /* Dark mode for common elements */
-    [data-theme="dark"] .bg-white {
+    /* FORCE dark mode styles on ALL elements */
+    [data-theme="dark"] * {
+        border-color: var(--border-color) !important;
+    }
+
+    /* Dark mode for divs and containers */
+    [data-theme="dark"] div[style*="background"],
+    [data-theme="dark"] div[style*="background-color"] {
         background-color: var(--card-bg) !important;
     }
 
+    [data-theme="dark"] .bg-white,
+    [data-theme="dark"] div[class*="bg-white"] {
+        background-color: var(--card-bg) !important;
+    }
+
+    [data-theme="dark"] .bg-gray-50,
+    [data-theme="dark"] .bg-gray-100,
+    [data-theme="dark"] .bg-gray-200 {
+        background-color: var(--bg-tertiary) !important;
+    }
+
+    /* Text colors */
     [data-theme="dark"] .text-gray-900,
-    [data-theme="dark"] .text-gray-800 {
+    [data-theme="dark"] .text-gray-800,
+    [data-theme="dark"] .text-gray-700 {
         color: var(--text-primary) !important;
     }
 
     [data-theme="dark"] .text-gray-600,
-    [data-theme="dark"] .text-gray-500,
-    [data-theme="dark"] .text-gray-700 {
+    [data-theme="dark"] .text-gray-500 {
         color: var(--text-secondary) !important;
     }
 
+    [data-theme="dark"] .text-gray-400 {
+        color: var(--text-tertiary) !important;
+    }
+
+    /* Borders */
     [data-theme="dark"] .border-gray-200,
-    [data-theme="dark"] .border-gray-300 {
+    [data-theme="dark"] .border-gray-300,
+    [data-theme="dark"] .border-gray-400 {
         border-color: var(--border-color) !important;
     }
 
+    /* Inputs, textareas, selects */
     [data-theme="dark"] input,
     [data-theme="dark"] textarea,
     [data-theme="dark"] select {
@@ -197,16 +222,77 @@
         color: var(--text-primary) !important;
     }
 
+    [data-theme="dark"] input::placeholder,
+    [data-theme="dark"] textarea::placeholder {
+        color: var(--text-tertiary) !important;
+    }
+
+    /* Tables */
     [data-theme="dark"] table {
         background-color: var(--card-bg) !important;
+        color: var(--text-primary) !important;
+    }
+
+    [data-theme="dark"] thead {
+        background-color: var(--bg-tertiary) !important;
     }
 
     [data-theme="dark"] tbody tr {
         border-color: var(--border-color) !important;
+        background-color: var(--card-bg) !important;
     }
 
-    [data-theme="dark"] .shadow-sm {
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3) !important;
+    [data-theme="dark"] tbody tr:hover {
+        background-color: var(--bg-tertiary) !important;
+    }
+
+    /* Shadows */
+    [data-theme="dark"] .shadow,
+    [data-theme="dark"] .shadow-sm,
+    [data-theme="dark"] .shadow-md,
+    [data-theme="dark"] .shadow-lg {
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5) !important;
+    }
+
+    /* Inline styles with white backgrounds */
+    [data-theme="dark"] [style*="background-color: white"],
+    [data-theme="dark"] [style*="background-color: #ffffff"],
+    [data-theme="dark"] [style*="background-color:#ffffff"],
+    [data-theme="dark"] [style*="background-color: #fff"],
+    [data-theme="dark"] [style*="background-color:#fff"],
+    [data-theme="dark"] [style*="background-color: rgb(255, 255, 255)"] {
+        background-color: var(--card-bg) !important;
+    }
+
+    /* Inline styles with gray backgrounds */
+    [data-theme="dark"] [style*="background-color: #f9fafb"],
+    [data-theme="dark"] [style*="background-color: #f3f4f6"],
+    [data-theme="dark"] [style*="background-color: #e5e7eb"] {
+        background-color: var(--bg-tertiary) !important;
+    }
+
+    /* Inline styles with text colors */
+    [data-theme="dark"] [style*="color: #111827"],
+    [data-theme="dark"] [style*="color: #1f2937"],
+    [data-theme="dark"] [style*="color: #374151"] {
+        color: var(--text-primary) !important;
+    }
+
+    [data-theme="dark"] [style*="color: #6b7280"],
+    [data-theme="dark"] [style*="color: #9ca3af"] {
+        color: var(--text-secondary) !important;
+    }
+
+    /* Buttons */
+    [data-theme="dark"] button {
+        background-color: var(--bg-tertiary) !important;
+        color: var(--text-primary) !important;
+        border-color: var(--border-color) !important;
+    }
+
+    /* Keep gradient buttons their original colors */
+    [data-theme="dark"] [style*="linear-gradient"] {
+        /* Gradients keep their colors */
     }
 </style>
 
