@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,65 +27,53 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // Validate input
         $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
             'role' => ['required', 'in:admin,teacher,student'],
         ]);
 
-        $credentials = $request->only('email', 'password');
-        $remember = $request->boolean('remember');
-        $role = $request->input('role');
         $email = $request->input('email');
+        $password = $request->input('password');
+        $role = $request->input('role');
+        $remember = $request->boolean('remember');
 
-        // Check if user exists in the correct table
-        $user = null;
-        $guard = null;
+        // Determine which model and guard to use based on role
+        $modelMap = [
+            'admin' => [Admin::class, 'admin', 'admin.dashboard'],
+            'teacher' => [Teacher::class, 'teacher', 'teacher.dashboard'],
+            'student' => [Student::class, 'student', 'student.dashboard'],
+        ];
 
-        switch ($role) {
-            case 'admin':
-                $user = Admin::where('email', $email)->first();
-                $guard = 'admin';
-                break;
-            case 'teacher':
-                $user = Teacher::where('email', $email)->first();
-                $guard = 'teacher';
-                break;
-            case 'student':
-                $user = Student::where('email', $email)->first();
-                $guard = 'web';
-                break;
-        }
+        [$modelClass, $guard, $dashboard] = $modelMap[$role];
 
-        // If user doesn't exist in the selected role table
+        // Find user in the SPECIFIC role table
+        $user = $modelClass::where('email', $email)->first();
+
+        // Check if user exists in this role's table
         if (!$user) {
-            return back()->withErrors([
-                'email' => "No {$role} account found with this email address.",
-            ])->onlyInput('email', 'role');
+            return back()
+                ->withErrors(['email' => "No {$role} account found with this email address."])
+                ->onlyInput('email', 'role')
+                ->with('error', "Login failed: No {$role} account exists with this email.");
         }
 
         // Verify password
-        if (!Hash::check($request->input('password'), $user->password)) {
-            return back()->withErrors([
-                'email' => 'The provided credentials do not match our records.',
-            ])->onlyInput('email', 'role');
+        if (!Hash::check($password, $user->password)) {
+            return back()
+                ->withErrors(['email' => 'The provided password is incorrect.'])
+                ->onlyInput('email', 'role')
+                ->with('error', 'Login failed: Incorrect password.');
         }
 
-        // Attempt to authenticate with the appropriate guard
-        if (Auth::guard($guard)->attempt($credentials, $remember)) {
-            $request->session()->regenerate();
+        // Login user with the CORRECT guard
+        Auth::guard($guard)->login($user, $remember);
+        $request->session()->regenerate();
 
-            // Redirect based on role
-            return match($role) {
-                'admin' => redirect()->intended(route('admin.dashboard')),
-                'teacher' => redirect()->intended(route('teacher.dashboard')),
-                'student' => redirect()->intended(route('dashboard')),
-            };
-        }
-
-        return back()->withErrors([
-            'email' => 'Authentication failed. Please try again.',
-        ])->onlyInput('email', 'role');
+        // Redirect to the correct dashboard
+        return redirect()->intended(route($dashboard))
+            ->with('success', "Welcome back, {$user->name}!");
     }
 
     /**
@@ -94,18 +81,16 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        // Determine which guard to logout from
-        if (Auth::guard('admin')->check()) {
-            Auth::guard('admin')->logout();
-        } elseif (Auth::guard('teacher')->check()) {
-            Auth::guard('teacher')->logout();
-        } else {
-            Auth::guard('web')->logout();
-        }
+        // Logout from all guards
+        Auth::guard('admin')->logout();
+        Auth::guard('teacher')->logout();
+        Auth::guard('student')->logout();
+        Auth::guard('old_student')->logout();
+        Auth::guard('web')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/login')->with('success', 'You have been logged out successfully.');
     }
 }

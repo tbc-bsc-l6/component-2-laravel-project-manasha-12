@@ -19,13 +19,61 @@
             overflow: hidden;
         }
         
-        /* Smooth gradient transition */
         .gradient-bg {
             transition: background 0.5s ease;
         }
     </style>
 </head>
 <body>
+    <!-- Toast Notifications -->
+    @if (session('success') || session('error'))
+        <div id="toast" style="position: fixed; top: 1rem; right: 1rem; z-index: 9999; min-width: 300px; max-width: 500px; animation: slideIn 0.3s ease-out;">
+            @if (session('success'))
+                <div style="display: flex; align-items: center; background-color: #d1fae5; border-left: 4px solid #10b981; padding: 1rem 1.5rem; border-radius: 0.5rem; box-shadow: 0 10px 15px rgba(0,0,0,0.2); cursor: pointer;">
+                    <svg style="width: 24px; height: 24px; color: #059669; margin-right: 0.75rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p style="color: #065f46; font-weight: 500; margin: 0;">{{ session('success') }}</p>
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div style="display: flex; align-items: center; background-color: #fee2e2; border-left: 4px solid #ef4444; padding: 1rem 1.5rem; border-radius: 0.5rem; box-shadow: 0 10px 15px rgba(0,0,0,0.2); cursor: pointer;">
+                    <svg style="width: 24px; height: 24px; color: #dc2626; margin-right: 0.75rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p style="color: #991b1b; font-weight: 500; margin: 0;">{{ session('error') }}</p>
+                </div>
+            @endif
+        </div>
+
+        <style>
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        </style>
+
+        <script>
+            setTimeout(() => {
+                const toast = document.getElementById('toast');
+                if (toast) {
+                    toast.style.animation = 'slideOut 0.3s ease-out';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 5000);
+
+            document.getElementById('toast')?.addEventListener('click', function() {
+                this.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => this.remove(), 300);
+            });
+        </script>
+    @endif
+
     <div style="display: flex; height: 100vh;">
         
         <!-- Left Side - Image/Branding (Dynamic Gradient) -->
@@ -103,9 +151,9 @@
                             Email address
                         </label>
                         <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
-                            style="width: 100%; padding: 0.75rem 1rem; background-color: #1f2937; border: 1px solid #374151; border-radius: 0.5rem; color: white; font-size: 0.875rem; transition: all 0.2s;"
+                            style="width: 100%; padding: 0.75rem 1rem; background-color: #1f2937; border: 1px solid {{ $errors->has('email') ? '#ef4444' : '#374151' }}; border-radius: 0.5rem; color: white; font-size: 0.875rem; transition: all 0.2s;"
                             onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
-                            onblur="this.style.borderColor='#374151'; this.style.boxShadow='none'"
+                            onblur="this.style.borderColor='{{ $errors->has('email') ? '#ef4444' : '#374151' }}'; this.style.boxShadow='none'"
                             placeholder="your.email@example.com">
                         @error('email')
                             <p style="margin-top: 0.5rem; font-size: 0.875rem; color: #ef4444;">{{ $message }}</p>
@@ -114,26 +162,14 @@
 
                     <!-- Password -->
                     <div style="margin-bottom: 1.5rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                            <label for="password" style="font-size: 0.875rem; font-weight: 500; color: #d1d5db;">
-                                Password
-                            </label>
-                            @if (Route::has('password.request'))
-                                <a href="{{ route('password.request') }}" style="font-size: 0.875rem; color: #60a5fa; text-decoration: none; transition: color 0.2s;"
-                                   onmouseover="this.style.color='#93c5fd'"
-                                   onmouseout="this.style.color='#60a5fa'">
-                                    Forgot password?
-                                </a>
-                            @endif
-                        </div>
+                        <label for="password" style="display: block; font-size: 0.875rem; font-weight: 500; color: #d1d5db; margin-bottom: 0.5rem;">
+                            Password
+                        </label>
                         <input id="password" type="password" name="password" required
                             style="width: 100%; padding: 0.75rem 1rem; background-color: #1f2937; border: 1px solid #374151; border-radius: 0.5rem; color: white; font-size: 0.875rem; transition: all 0.2s;"
                             onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
                             onblur="this.style.borderColor='#374151'; this.style.boxShadow='none'"
                             placeholder="••••••••••">
-                        @error('password')
-                            <p style="margin-top: 0.5rem; font-size: 0.875rem; color: #ef4444;">{{ $message }}</p>
-                        @enderror
                     </div>
 
                     <!-- Remember Me -->
@@ -154,28 +190,6 @@
                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(59, 130, 246, 0.3)'">
                         Sign in as <span id="roleText">Admin</span>
                     </button>
-
-                    <!-- Divider -->
-                    <!-- <div style="position: relative; margin: 2rem 0;">
-                        <div style="position: absolute; inset: 0; display: flex; align-items: center;">
-                            <div style="width: 100%; border-top: 1px solid #374151;"></div>
-                        </div>
-                        <div style="position: relative; display: flex; justify-content: center; font-size: 0.875rem;">
-                            <span style="background-color: #0a0a0a; padding: 0 1rem; color: #6b7280;">
-                                New to EduManage?
-                            </span>
-                        </div>
-                    </div> -->
-
-                    <!-- Register Link -->
-                    <!-- <div style="text-align: center;">
-                        <a href="{{ route('login') }}" 
-                           style="font-size: 0.875rem; color: #60a5fa; text-decoration: none; font-weight: 500; transition: color 0.2s;"
-                           onmouseover="this.style.color='#93c5fd'"
-                           onmouseout="this.style.color='#60a5fa'">
-                            Create your account →
-                        </a>
-                    </div> -->
                 </form>
 
                 <!-- Footer -->
@@ -193,10 +207,9 @@
     </div>
 
     <script>
-        // Role configuration
         const roleConfig = {
             admin: {
-                gradient: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%)', // Blue
+                gradient: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%)',
                 buttonGradient: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
                 logoColor: '#3b82f6',
                 activeColor: '#3b82f6',
@@ -205,7 +218,7 @@
                 footer: 'Administration — Leading education to new heights'
             },
             teacher: {
-                gradient: 'linear-gradient(135deg, #581c87 0%, #9333ea 50%, #c084fc 100%)', // Purple
+                gradient: 'linear-gradient(135deg, #581c87 0%, #9333ea 50%, #c084fc 100%)',
                 buttonGradient: 'linear-gradient(135deg, #9333ea 0%, #7e22ce 100%)',
                 logoColor: '#9333ea',
                 activeColor: '#9333ea',
@@ -214,7 +227,7 @@
                 footer: 'Teaching — Empowering the next generation'
             },
             student: {
-                gradient: 'linear-gradient(135deg, #065f46 0%, #10b981 50%, #6ee7b7 100%)', // Green
+                gradient: 'linear-gradient(135deg, #065f46 0%, #10b981 50%, #6ee7b7 100%)',
                 buttonGradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                 logoColor: '#10b981',
                 activeColor: '#10b981',
@@ -224,39 +237,21 @@
             }
         };
 
-        // Role selection function
         function selectRole(role) {
-            // Update hidden input
             document.getElementById('roleInput').value = role;
             
-            // Get configuration for selected role
             const config = roleConfig[role];
+            const roleTextMap = { 'admin': 'Admin', 'teacher': 'Teacher', 'student': 'Student' };
             
-            // Update button text
-            const roleTextMap = {
-                'admin': 'Admin',
-                'teacher': 'Teacher',
-                'student': 'Student'
-            };
             document.getElementById('roleText').textContent = roleTextMap[role];
-            
-            // Update gradient background
             document.getElementById('gradientSide').style.background = config.gradient;
-            
-            // Update logo color
             document.getElementById('logoText').style.color = config.logoColor;
-            
-            // Update headings
             document.getElementById('mainHeading').textContent = config.heading;
             document.getElementById('subHeading').textContent = config.subheading;
             document.getElementById('footerText').textContent = config.footer;
-            
-            // Update submit button gradient
             document.getElementById('submitButton').style.background = config.buttonGradient;
             
-            // Update tab styles
-            const tabs = ['admin', 'teacher', 'student'];
-            tabs.forEach(tab => {
+            ['admin', 'teacher', 'student'].forEach(tab => {
                 const button = document.getElementById('tab-' + tab);
                 if (tab === role) {
                     button.style.backgroundColor = config.activeColor;
@@ -268,8 +263,7 @@
             });
         }
 
-        // Initialize with the old role value or default to admin
-        const oldRole = 'admin';
+        const oldRole = '{{ old('role', 'admin') }}';
         selectRole(oldRole);
     </script>
 </body>

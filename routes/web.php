@@ -37,7 +37,7 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
             'total_students' => \App\Models\Student::count() + \App\Models\OldStudent::count(),
             'active_enrollments' => \App\Models\Enrollment::where('status', 'active')->count(),
         ];
-        
+
         return view('admin.dashboard', compact('stats'));
     })->name('dashboard');
 
@@ -75,6 +75,45 @@ Route::middleware(['auth:teacher'])->prefix('teacher')->name('teacher.')->group(
     })->name('dashboard');
 });
 
+//Teacher Dashboard (Controller)
+Route::middleware(['auth:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [App\Http\Controllers\Teacher\DashboardController::class, 'index'])
+        ->name('dashboard');
+
+    // Modules
+    Route::get('/modules', [App\Http\Controllers\Teacher\ModuleController::class, 'index'])
+        ->name('modules.index');
+
+    Route::get('/modules/{module}', [App\Http\Controllers\Teacher\ModuleController::class, 'show'])
+        ->name('modules.show');
+
+    // Grading
+    Route::post(
+        '/modules/{module}/enrollments/{enrollment}/grade',
+        [App\Http\Controllers\Teacher\ModuleController::class, 'gradeStudent']
+    )
+        ->name('modules.grade-student');
+
+    Route::post(
+        '/modules/{module}/bulk-grade',
+        [App\Http\Controllers\Teacher\ModuleController::class, 'bulkGrade']
+    )
+        ->name('modules.bulk-grade');
+
+        Route::get('/grading', [App\Http\Controllers\Teacher\GradingController::class, 'index'])
+        ->name('grading.index');
+    
+    Route::get('/grading/module/{module}', [App\Http\Controllers\Teacher\GradingController::class, 'showModule'])
+        ->name('grading.module');
+    
+    Route::post('/grading/{enrollment}/grade', [App\Http\Controllers\Teacher\GradingController::class, 'grade'])
+        ->name('grading.grade');
+    
+    Route::post('/grading/module/{module}/bulk-grade', [App\Http\Controllers\Teacher\GradingController::class, 'bulkGrade'])
+        ->name('grading.bulk-grade');
+});
+
 // Student Dashboard (for both students and old_students)
 Route::middleware(['auth:student,old_student'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', function () {
@@ -83,4 +122,4 @@ Route::middleware(['auth:student,old_student'])->prefix('student')->name('studen
 });
 
 // Auth routes (login, logout, etc.)
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
