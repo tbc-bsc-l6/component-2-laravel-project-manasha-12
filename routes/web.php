@@ -101,24 +101,47 @@ Route::middleware(['auth:teacher'])->prefix('teacher')->name('teacher.')->group(
     )
         ->name('modules.bulk-grade');
 
-        Route::get('/grading', [App\Http\Controllers\Teacher\GradingController::class, 'index'])
+    Route::get('/grading', [App\Http\Controllers\Teacher\GradingController::class, 'index'])
         ->name('grading.index');
-    
+
     Route::get('/grading/module/{module}', [App\Http\Controllers\Teacher\GradingController::class, 'showModule'])
         ->name('grading.module');
-    
+
     Route::post('/grading/{enrollment}/grade', [App\Http\Controllers\Teacher\GradingController::class, 'grade'])
         ->name('grading.grade');
-    
+
     Route::post('/grading/module/{module}/bulk-grade', [App\Http\Controllers\Teacher\GradingController::class, 'bulkGrade'])
         ->name('grading.bulk-grade');
 });
 
-// Student Dashboard (for both students and old_students)
+// Student Routes (Both Student and Old Student)
 Route::middleware(['auth:student,old_student'])->prefix('student')->name('student.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('student.dashboard');
-    })->name('dashboard');
+    // Dashboard
+    Route::get('/dashboard', [App\Http\Controllers\Student\DashboardController::class, 'index'])
+        ->name('dashboard');
+
+    // Available Modules (Only for active students, not old students)
+    Route::get('/modules/available', [App\Http\Controllers\Student\ModuleController::class, 'available'])
+        ->name('modules.available')
+        ->middleware('check.student.type:student'); // Only active students
+
+    // Enroll in Module (Only for active students)
+    Route::post('/modules/{module}/enroll', [App\Http\Controllers\Student\ModuleController::class, 'enroll'])
+        ->name('modules.enroll')
+        ->middleware('check.student.type:student'); // Only active students
+
+    // My Current Modules (Active enrollments)
+    Route::get('/modules/current', [App\Http\Controllers\Student\ModuleController::class, 'current'])
+        ->name('modules.current')
+        ->middleware('check.student.type:student'); // Only active students
+
+    // Module History (Completed modules with PASS/FAIL)
+    Route::get('/modules/history', [App\Http\Controllers\Student\ModuleController::class, 'history'])
+        ->name('modules.history');
+
+    // View specific module details
+    Route::get('/modules/{module}', [App\Http\Controllers\Student\ModuleController::class, 'show'])
+        ->name('modules.show');
 });
 
 // Auth routes (login, logout, etc.)
