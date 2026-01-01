@@ -7,10 +7,8 @@
                 <!-- Logo (Text) -->
                 <div style="flex-shrink: 0;">
                     <a href="{{ route('admin.dashboard') }}" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
-                        <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); width: 32px; height: 32px; border-radius: 0.375rem; display: flex; align-items: center; justify-content: center;">
-                            <span style="color: white; font-weight: 700; font-size: 1rem;">E</span>
-                        </div>
-                        <span style="font-size: 1.125rem; font-weight: 700; color: var(--text-primary, #111827); transition: color 0.3s ease;">EduManage</span>
+                        
+                        <span style="font-size: 1.125rem; font-weight: 700; color: var(--text-primary, #111827); transition: color 0.3s ease;">SchoolTrack</span>
                     </a>
                 </div>
 

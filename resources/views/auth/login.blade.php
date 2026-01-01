@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login - {{ config('app.name', 'EduManage') }}</title>
+    <title>Login - {{ config('app.name', 'SchoolTrack') }}</title>
     
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -84,26 +84,23 @@
             
             <!-- Logo -->
             <div style="position: absolute; top: 2rem; left: 2rem; display: flex; align-items: center; gap: 0.75rem;">
-                <div style="background-color: white; width: 48px; height: 48px; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 15px rgba(0,0,0,0.2);">
-                    <span id="logoText" style="color: #3b82f6; font-size: 1.5rem; font-weight: 700;">E</span>
-                </div>
-                <span style="font-size: 1.5rem; font-weight: 700;">EduManage</span>
+                <span id="logoText" style="font-size: 1.5rem; font-weight: 700; color: #3b82f6;">SchoolTrack</span>
             </div>
 
             <!-- Main Content -->
             <div style="z-index: 10; text-align: center; max-width: 500px;">
                 <h1 id="mainHeading" style="font-size: 3rem; font-weight: 700; margin: 0 0 1.5rem 0; line-height: 1.2;">
-                    Design your future, one blueprint at a time
+                    Manage your institution with excellence
                 </h1>
                 <p id="subHeading" style="font-size: 1.25rem; margin: 0; opacity: 0.9; line-height: 1.6;">
-                    Join a community of educators and students shaping tomorrow
+                    Administrative dashboard for complete control
                 </p>
             </div>
 
             <!-- Footer Text -->
             <div style="position: absolute; bottom: 2rem; left: 2rem; right: 2rem; text-align: center; opacity: 0.8;">
                 <p id="footerText" style="font-size: 0.875rem; margin: 0;">
-                    Education — Your gateway to excellence, at any level
+                    Administration — Leading education to new heights
                 </p>
             </div>
         </div>
@@ -211,7 +208,7 @@
             admin: {
                 gradient: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%)',
                 buttonGradient: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                logoColor: '#3b82f6',
+                logoColor: 'white',
                 activeColor: '#3b82f6',
                 heading: 'Manage your institution with excellence',
                 subheading: 'Administrative dashboard for complete control',
@@ -220,7 +217,7 @@
             teacher: {
                 gradient: 'linear-gradient(135deg, #581c87 0%, #9333ea 50%, #c084fc 100%)',
                 buttonGradient: 'linear-gradient(135deg, #9333ea 0%, #7e22ce 100%)',
-                logoColor: '#9333ea',
+                logoColor: 'white',
                 activeColor: '#9333ea',
                 heading: 'Inspire minds, shape futures',
                 subheading: 'Teaching platform for educators who make a difference',
@@ -229,7 +226,7 @@
             student: {
                 gradient: 'linear-gradient(135deg, #065f46 0%, #10b981 50%, #6ee7b7 100%)',
                 buttonGradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                logoColor: '#10b981',
+                logoColor: 'white',
                 activeColor: '#10b981',
                 heading: 'Your learning journey starts here',
                 subheading: 'Student portal for academic excellence and growth',
@@ -238,11 +235,15 @@
         };
 
         function selectRole(role) {
+            console.log('Selecting role:', role); // Debug log
+            
+            // Update hidden input
             document.getElementById('roleInput').value = role;
             
             const config = roleConfig[role];
             const roleTextMap = { 'admin': 'Admin', 'teacher': 'Teacher', 'student': 'Student' };
             
+            // Update all UI elements
             document.getElementById('roleText').textContent = roleTextMap[role];
             document.getElementById('gradientSide').style.background = config.gradient;
             document.getElementById('logoText').style.color = config.logoColor;
@@ -251,6 +252,7 @@
             document.getElementById('footerText').textContent = config.footer;
             document.getElementById('submitButton').style.background = config.buttonGradient;
             
+            // Update tab styles
             ['admin', 'teacher', 'student'].forEach(tab => {
                 const button = document.getElementById('tab-' + tab);
                 if (tab === role) {
@@ -261,9 +263,13 @@
                     button.style.color = '#9ca3af';
                 }
             });
+            
+            console.log('Role updated to:', role); // Debug log
         }
 
+        // Initialize with old role or default to admin
         const oldRole = '{{ old('role', 'admin') }}';
+        console.log('Initial role:', oldRole); // Debug log
         selectRole(oldRole);
     </script>
 </body>

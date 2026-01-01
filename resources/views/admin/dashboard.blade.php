@@ -24,7 +24,7 @@
                         <div>
                             <p class="text-sm font-medium text-yellow-600 mb-1">Total Modules</p>
                             <p class="text-3xl font-bold text-yellow-900">{{ $stats['total_modules'] }}</p>
-                            <p class="text-xs text-yellow-600 mt-1">+24% from last month</p>
+                            <p class="text-xs text-yellow-600 mt-1">Completed and running</p>
                         </div>
                         <div class="bg-yellow-500 rounded-full p-4">
                             <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

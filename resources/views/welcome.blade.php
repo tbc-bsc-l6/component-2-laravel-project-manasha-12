@@ -125,9 +125,7 @@
                 
                 <!-- Logo -->
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                        <span style="color: white; font-weight: 700; font-size: 1.25rem;">S</span>
-                    </div>
+                    
                     <span style="font-size: 1.25rem; font-weight: 700; color: #1f2937;">SchoolTrack</span>
                 </div>
 
