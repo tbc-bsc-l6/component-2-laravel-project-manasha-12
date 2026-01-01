@@ -20,26 +20,11 @@ Route::middleware(['auth:admin,teacher,student,old_student'])->group(function ()
     Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 });
 
-// Admin Dashboard
-// Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
-//     Route::get('/dashboard', function () {
-//         return view('admin.dashboard');
-//     })->name('dashboard');
-// });
 // Admin Routes
 Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
-    Route::get('/dashboard', function () {
-        $stats = [
-            'total_modules' => \App\Models\Module::count(),
-            'active_modules' => \App\Models\Module::where('is_available', true)->count(),
-            'total_teachers' => \App\Models\Teacher::count(),
-            'total_students' => \App\Models\Student::count() + \App\Models\OldStudent::count(),
-            'active_enrollments' => \App\Models\Enrollment::where('status', 'active')->count(),
-        ];
-
-        return view('admin.dashboard', compact('stats'));
-    })->name('dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])
+        ->name('dashboard');
 
     // Module Management
     Route::resource('modules', ModuleController::class);
