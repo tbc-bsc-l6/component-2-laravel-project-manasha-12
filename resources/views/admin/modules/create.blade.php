@@ -59,7 +59,7 @@
                                 <label for="max_students" style="display: block; font-size: 0.875rem; font-weight: 600; color: var(--text-primary, #111827); margin-bottom: 0.5rem;">
                                     Maximum Students *
                                 </label>
-                                <input type="number" name="max_students" id="max_students" value="{{ old('max_students', 30) }}" min="1" max="100" required placeholder="30"
+                                <input type="number" name="max_students" id="max_students" value="{{ old('max_students', 30) }}" min="1" max="10" required placeholder="10"
                                     style="width: 100%; padding: 0.75rem 1rem; background-color: var(--input-bg, white); border: 1px solid {{ $errors->has('max_students') ? '#ef4444' : 'var(--input-border, #d1d5db)' }}; border-radius: 0.5rem; font-size: 0.875rem; color: var(--text-primary, #111827); transition: all 0.2s;"
                                     onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
                                     onblur="this.style.borderColor='var(--input-border, #d1d5db)'; this.style.boxShadow='none'">

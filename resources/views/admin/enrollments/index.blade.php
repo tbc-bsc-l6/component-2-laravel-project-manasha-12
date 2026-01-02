@@ -22,7 +22,7 @@
                 </div>
                 
                 <div style="background: linear-gradient(135deg, #d1fae5 0%, #e7f9f0 100%); border: 1px solid #a7f3d0; border-radius: 1rem; padding: 1.5rem;">
-                    <p style="font-size: 0.875rem; color: #059669; font-weight: 500;">Active Enrollments</p>
+                    <p style="font-size: 0.875rem; color: #059669; font-weight: 500;">Actively Enrolled Students</p>
                     <p style="font-size: 2rem; font-weight: 700; color: #064e3b;">
                         {{ $enrollments->filter(function($e) { return $e->status === 'active'; })->count() }}
                     </p>
