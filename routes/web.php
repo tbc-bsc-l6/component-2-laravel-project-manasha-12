@@ -16,6 +16,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');
+
 // Profile routes - accessible by ALL authenticated user types
 Route::middleware(['auth:admin,teacher,student,old_student'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

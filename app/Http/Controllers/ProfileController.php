@@ -33,6 +33,7 @@ namespace App\Http\Controllers;
 | These models represent different authenticated user types.
 | Each model is linked to its own authentication guard.
 */
+
 use App\Models\Admin;
 use App\Models\Teacher;
 use App\Models\Student;
@@ -87,7 +88,7 @@ class ProfileController extends Controller
     {
         // Retrieve the currently authenticated user
         $user = $this->getCurrentUser();
-        
+
         // Validate incoming request data
         $validated = $request->validate([
             // Name must be present, a string, and within length limits
@@ -130,26 +131,27 @@ class ProfileController extends Controller
      */
     public function updatePassword(Request $request)
     {
-        // Validate password inputs
         $validated = $request->validate([
-            // Must match the user's existing password
             'current_password' => ['required', 'current_password'],
-
-            // New password must follow default Laravel security rules
-            // and be confirmed using password_confirmation
-            'password' => ['required', Password::defaults(), 'confirmed'],
+            'password' => ['required', 'min:8', 'confirmed'],
         ]);
 
-        // Retrieve the currently authenticated user
-        $user = $this->getCurrentUser();
-        
-        // Hash the new password before saving
-        $user->password = Hash::make($validated['password']);
+        // Get authenticated user from any guard
+        $user = null;
+        if (Auth::guard('admin')->check()) {
+            $user = Auth::guard('admin')->user();
+        } elseif (Auth::guard('teacher')->check()) {
+            $user = Auth::guard('teacher')->user();
+        } elseif (Auth::guard('student')->check()) {
+            $user = Auth::guard('student')->user();
+        } elseif (Auth::guard('old_student')->check()) {
+            $user = Auth::guard('old_student')->user();
+        }
 
-        // Save the updated password to the database
-        $user->save();
+        $user->update([
+            'password' => Hash::make($validated['password']),
+        ]);
 
-        // Redirect back with a success status message
         return back()->with('status', 'password-updated');
     }
 
@@ -174,19 +176,19 @@ class ProfileController extends Controller
         if (Auth::guard('admin')->check()) {
             return Auth::guard('admin')->user();
         }
-        
+
         if (Auth::guard('teacher')->check()) {
             return Auth::guard('teacher')->user();
         }
-        
+
         if (Auth::guard('student')->check()) {
             return Auth::guard('student')->user();
         }
-        
+
         if (Auth::guard('old_student')->check()) {
             return Auth::guard('old_student')->user();
         }
-        
+
         // If no guard is authenticated, deny access
         abort(403, 'User not authenticated');
     }
@@ -206,19 +208,19 @@ class ProfileController extends Controller
         if (Auth::guard('admin')->check()) {
             return 'admins';
         }
-        
+
         if (Auth::guard('teacher')->check()) {
             return 'teachers';
         }
-        
+
         if (Auth::guard('student')->check()) {
             return 'students';
         }
-        
+
         if (Auth::guard('old_student')->check()) {
             return 'old_students';
         }
-        
+
         // Fallback (should not normally be reached)
         return 'users';
     }

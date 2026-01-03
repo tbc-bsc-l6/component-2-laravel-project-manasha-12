@@ -37,17 +37,6 @@
 
             <!-- Right: Calendar Button + User Dropdown -->
             <div class="flex items-center space-x-4">
-                
-                <!-- User Badge -->
-                @if(Auth::guard('old_student')->check())
-                <span class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full">
-                    Alumni
-                </span>
-                @else
-                <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
-                    Active Student
-                </span>
-                @endif
 
                 <!-- Calendar Button -->
                 <button id="calendarButton" onclick="openCalendarModal()"
@@ -60,13 +49,24 @@
                     <span>Calendar</span>
                 </button>
 
+                <!-- User Badge -->
+                @if(Auth::guard('old_student')->check())
+                <span class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full">
+                    Alumni
+                </span>
+                @else
+                <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                    Active Student
+                </span>
+                @endif
+
                 <!-- User Dropdown -->
                 <div style="position: relative;">
                     <!-- Dropdown Button -->
-                    <button type="button" id="user-menu-button" onclick="toggleDropdown()" 
-                            style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; background-color: white; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; color: #374151; cursor: pointer; transition: all 0.2s;"
-                            onmouseover="this.style.backgroundColor='#f9fafb'; this.style.borderColor='#9ca3af'"
-                            onmouseout="this.style.backgroundColor='white'; this.style.borderColor='#d1d5db'">
+                    <button type="button" id="user-menu-button" onclick="toggleDropdown()"
+                        style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; background-color: white; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; color: #374151; cursor: pointer; transition: all 0.2s;"
+                        onmouseover="this.style.backgroundColor='#f9fafb'; this.style.borderColor='#9ca3af'"
+                        onmouseout="this.style.backgroundColor='white'; this.style.borderColor='#d1d5db'">
                         <div style="width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); display: flex; align-items: center; justify-content: center; margin-right: 0.5rem;">
                             <span style="color: white; font-size: 0.75rem; font-weight: 600;">
                                 @if(Auth::guard('student')->check())
@@ -84,13 +84,13 @@
                             @endif
                         </span>
                         <svg style="width: 16px; height: 16px; margin-left: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
 
                     <!-- Dropdown Menu -->
-                    <div id="user-menu" 
-                         style="display: none; position: absolute; right: 0; margin-top: 0.5rem; width: 200px; background-color: white; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); z-index: 50; border: 1px solid #e5e7eb;">
+                    <div id="user-menu"
+                        style="display: none; position: absolute; right: 0; margin-top: 0.5rem; width: 200px; background-color: white; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); z-index: 50; border: 1px solid #e5e7eb;">
                         <div style="padding: 0.5rem;">
                             <!-- User Info -->
                             <div style="padding: 0.5rem 0.75rem; border-bottom: 1px solid #e5e7eb; margin-bottom: 0.5rem;">
@@ -111,25 +111,25 @@
                             </div>
 
                             <!-- Profile Link -->
-                            <a href="{{ route('profile.edit') }}" 
-                               style="display: flex; align-items: center; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #374151; text-decoration: none; border-radius: 0.375rem; transition: background-color 0.15s;"
-                               onmouseover="this.style.backgroundColor='#f3f4f6'" 
-                               onmouseout="this.style.backgroundColor='transparent'">
+                            <a href="{{ route('profile.edit') }}"
+                                style="display: flex; align-items: center; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #374151; text-decoration: none; border-radius: 0.375rem; transition: background-color 0.15s;"
+                                onmouseover="this.style.backgroundColor='#f3f4f6'"
+                                onmouseout="this.style.backgroundColor='transparent'">
                                 <svg style="width: 16px; height: 16px; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
                                 Profile
                             </a>
-                            
+
                             <!-- Logout Form -->
                             <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
                                 @csrf
-                                <button type="submit" 
-                                        style="display: flex; align-items: center; width: 100%; text-align: left; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #ef4444; background: none; border: none; cursor: pointer; border-radius: 0.375rem; transition: background-color 0.15s;"
-                                        onmouseover="this.style.backgroundColor='#fef2f2'" 
-                                        onmouseout="this.style.backgroundColor='transparent'">
+                                <button type="submit"
+                                    style="display: flex; align-items: center; width: 100%; text-align: left; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #ef4444; background: none; border: none; cursor: pointer; border-radius: 0.375rem; transition: background-color 0.15s;"
+                                    onmouseover="this.style.backgroundColor='#fef2f2'"
+                                    onmouseout="this.style.backgroundColor='transparent'">
                                     <svg style="width: 16px; height: 16px; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                     </svg>
                                     Log Out
                                 </button>
@@ -152,7 +152,7 @@
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
                         <svg style="width: 24px; height: 24px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                     </div>
                     <div>
@@ -177,13 +177,13 @@
 
             <!-- Modal Body -->
             <div style="padding: 2rem; overflow-y: auto; flex: 1;">
-                
+
                 <!-- Google Sign In Section -->
                 <div id="signInSection" style="text-align: center; padding: 4rem 2rem;">
                     <div style="max-width: 400px; margin: 0 auto;">
                         <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem;">
                             <svg style="width: 50px; height: 50px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                         </div>
                         <h3 style="font-size: 1.5rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem;">Connect to Google Calendar</h3>
@@ -192,7 +192,7 @@
                         <div style="margin-top: 2rem; padding: 1rem; background-color: #f0fdf4; border-radius: 0.5rem; border: 1px solid #bbf7d0;">
                             <div style="display: flex; align-items: start; gap: 0.75rem;">
                                 <svg style="width: 20px; height: 20px; color: #16a34a; flex-shrink: 0; margin-top: 0.125rem;" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
                                 </svg>
                                 <div style="text-align: left;">
                                     <p style="font-size: 0.875rem; color: #166534; font-weight: 600; margin: 0 0 0.25rem 0;">Secure & Private</p>
@@ -212,7 +212,7 @@
                             onmouseover="this.style.backgroundColor='#fecaca'; this.style.borderColor='#fca5a5'"
                             onmouseout="this.style.backgroundColor='#fee2e2'; this.style.borderColor='#fecaca'">
                             <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
                             </svg>
                             Disconnect Google
                         </button>
@@ -221,12 +221,12 @@
                             onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px rgba(16, 185, 129, 0.4)'"
                             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(16, 185, 129, 0.3)'">
                             <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                             </svg>
                             Add New Event
                         </button>
                     </div>
-                    
+
                     <!-- Calendar Container -->
                     <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
                         <div id="calendar" style="padding: 1rem;"></div>
