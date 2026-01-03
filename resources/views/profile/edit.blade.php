@@ -1,114 +1,137 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Profile Settings') }}
+            </h2>
+            <div class="flex items-center space-x-2">
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <span class="text-sm text-gray-600">Manage your account</span>
+            </div>
+        </div>
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <!-- Profile Information -->
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    <section>
-                        <header>
-                            <h2 class="text-lg font-medium text-gray-900">
-                                {{ __('Profile Information') }}
-                            </h2>
-                            <p class="mt-1 text-sm text-gray-600">
-                                {{ __("Update your account's profile information and email address.") }}
-                            </p>
-                        </header>
-
-                        <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
-                            @csrf
-                            @method('patch')
-
-                            <!-- Name -->
-                            <div>
-                                <x-input-label for="name" :value="__('Name')" />
-                                <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
-                                <x-input-error class="mt-2" :messages="$errors->get('name')" />
-                            </div>
-
-                            <!-- Email -->
-                            <div>
-                                <x-input-label for="email" :value="__('Email')" />
-                                <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
-                                <x-input-error class="mt-2" :messages="$errors->get('email')" />
-                            </div>
-
-                            <div class="flex items-center gap-4">
-                                <x-primary-button>{{ __('Save') }}</x-primary-button>
-
-                                @if (session('status') === 'profile-updated')
-                                    <p
-                                        x-data="{ show: true }"
-                                        x-show="show"
-                                        x-transition
-                                        x-init="setTimeout(() => show = false, 2000)"
-                                        class="text-sm text-gray-600"
-                                    >{{ __('Saved.') }}</p>
-                                @endif
-                            </div>
-                        </form>
-                    </section>
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            
+            <!-- Success Messages -->
+            @if (session('status') === 'profile-updated')
+                <div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <p class="text-green-700 font-medium">Profile updated successfully!</p>
+                    </div>
                 </div>
-            </div>
+            @endif
 
-            <!-- Update Password -->
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    <section>
-                        <header>
-                            <h2 class="text-lg font-medium text-gray-900">
-                                {{ __('Update Password') }}
-                            </h2>
-                            <p class="mt-1 text-sm text-gray-600">
-                                {{ __('Ensure your account is using a long, random password to stay secure.') }}
-                            </p>
-                        </header>
+            @if (session('status') === 'password-updated')
+                <div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <p class="text-green-700 font-medium">Password updated successfully!</p>
+                    </div>
+                </div>
+            @endif
 
-                        <form method="post" action="{{ route('password.update') }}" class="mt-6 space-y-6">
-                            @csrf
-                            @method('put')
-
-                            <!-- Current Password -->
-                            <div>
-                                <x-input-label for="current_password" :value="__('Current Password')" />
-                                <x-text-input id="current_password" name="current_password" type="password" class="mt-1 block w-full" autocomplete="current-password" />
-                                <x-input-error :messages="$errors->get('current_password')" class="mt-2" />
-                            </div>
-
-                            <!-- New Password -->
-                            <div>
-                                <x-input-label for="password" :value="__('New Password')" />
-                                <x-text-input id="password" name="password" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-                                <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                            </div>
-
-                            <!-- Confirm Password -->
-                            <div>
-                                <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-                                <x-text-input id="password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-                                <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-                            </div>
-
-                            <div class="flex items-center gap-4">
-                                <x-primary-button>{{ __('Save') }}</x-primary-button>
-
-                                @if (session('status') === 'password-updated')
-                                    <p
-                                        x-data="{ show: true }"
-                                        x-show="show"
-                                        x-transition
-                                        x-init="setTimeout(() => show = false, 2000)"
-                                        class="text-sm text-gray-600"
-                                    >{{ __('Saved.') }}</p>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Left Sidebar -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6">
+                            <!-- User Avatar -->
+                            <div class="text-center mb-6">
+                                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white text-3xl font-bold mb-3">
+                                    {{ substr(Auth::user()->name, 0, 1) }}
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900">{{ Auth::user()->name }}</h3>
+                                <p class="text-sm text-gray-500">{{ Auth::user()->email }}</p>
+                                
+                                @if(Auth::guard('student')->check())
+                                    <span class="inline-flex mt-3 px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
+                                        Active Student
+                                    </span>
+                                @elseif(Auth::guard('old_student')->check())
+                                    <span class="inline-flex mt-3 px-3 py-1 bg-gray-100 text-gray-800 text-xs font-semibold rounded-full">
+                                        Alumni
+                                    </span>
+                                @elseif(Auth::guard('teacher')->check())
+                                    <span class="inline-flex mt-3 px-3 py-1 bg-purple-100 text-purple-800 text-xs font-semibold rounded-full">
+                                        Teacher
+                                    </span>
+                                @elseif(Auth::guard('admin')->check())
+                                    <span class="inline-flex mt-3 px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
+                                        Administrator
+                                    </span>
                                 @endif
                             </div>
-                        </form>
-                    </section>
+
+                            <!-- Quick Stats -->
+                            <div class="border-t border-gray-200 pt-6 space-y-3">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-600">Account Status</span>
+                                    <span class="font-semibold text-green-600">Active</span>
+                                </div>
+                                @if(Auth::guard('student')->check() && Auth::user()->email_verified_at)
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-600">Email Verified</span>
+                                        <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                @endif
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-600">Member Since</span>
+                                    <span class="font-medium text-gray-900">{{ Auth::user()->created_at->format('M Y') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="lg:col-span-2 space-y-6">
+                    
+                    <!-- Update Profile Information -->
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex items-center mb-1">
+                                <svg class="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                                <h3 class="text-lg font-semibold text-gray-900">Profile Information</h3>
+                            </div>
+                            <p class="text-sm text-gray-600">Update your account's profile information and email address.</p>
+                        </div>
+                        
+                        <div class="p-6">
+                            @include('profile.partials.update-profile-information-form')
+                        </div>
+                    </div>
+
+                    <!-- Update Password -->
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex items-center mb-1">
+                                <svg class="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                                <h3 class="text-lg font-semibold text-gray-900">Update Password</h3>
+                            </div>
+                            <p class="text-sm text-gray-600">Ensure your account is using a long, random password to stay secure.</p>
+                        </div>
+                        
+                        <div class="p-6">
+                            @include('profile.partials.update-password-form')
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
