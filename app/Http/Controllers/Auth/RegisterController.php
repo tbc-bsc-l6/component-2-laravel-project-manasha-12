@@ -27,12 +27,11 @@ class RegisterController extends Controller
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
-        // Create the student (WITHOUT auto-verification)
+        // Create the student
         $student = Student::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            // Don't set email_verified_at - let the email verification handle it
         ]);
 
         // Fire the Registered event (sends verification email)
