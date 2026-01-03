@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Login - {{ config('app.name', 'SchoolTrack') }}</title>
-    
+
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
@@ -18,70 +19,86 @@
             font-family: 'Figtree', sans-serif;
             overflow: hidden;
         }
-        
+
         .gradient-bg {
             transition: background 0.5s ease;
         }
     </style>
 </head>
+
 <body>
     <!-- Toast Notifications -->
     @if (session('success') || session('error'))
-        <div id="toast" style="position: fixed; top: 1rem; right: 1rem; z-index: 9999; min-width: 300px; max-width: 500px; animation: slideIn 0.3s ease-out;">
-            @if (session('success'))
-                <div style="display: flex; align-items: center; background-color: #d1fae5; border-left: 4px solid #10b981; padding: 1rem 1.5rem; border-radius: 0.5rem; box-shadow: 0 10px 15px rgba(0,0,0,0.2); cursor: pointer;">
-                    <svg style="width: 24px; height: 24px; color: #059669; margin-right: 0.75rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <p style="color: #065f46; font-weight: 500; margin: 0;">{{ session('success') }}</p>
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div style="display: flex; align-items: center; background-color: #fee2e2; border-left: 4px solid #ef4444; padding: 1rem 1.5rem; border-radius: 0.5rem; box-shadow: 0 10px 15px rgba(0,0,0,0.2); cursor: pointer;">
-                    <svg style="width: 24px; height: 24px; color: #dc2626; margin-right: 0.75rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <p style="color: #991b1b; font-weight: 500; margin: 0;">{{ session('error') }}</p>
-                </div>
-            @endif
+    <div id="toast" style="position: fixed; top: 1rem; right: 1rem; z-index: 9999; min-width: 300px; max-width: 500px; animation: slideIn 0.3s ease-out;">
+        @if (session('success'))
+        <div style="display: flex; align-items: center; background-color: #d1fae5; border-left: 4px solid #10b981; padding: 1rem 1.5rem; border-radius: 0.5rem; box-shadow: 0 10px 15px rgba(0,0,0,0.2); cursor: pointer;">
+            <svg style="width: 24px; height: 24px; color: #059669; margin-right: 0.75rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p style="color: #065f46; font-weight: 500; margin: 0;">{{ session('success') }}</p>
         </div>
+        @endif
 
-        <style>
-            @keyframes slideIn {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
+        @if (session('error'))
+        <div style="display: flex; align-items: center; background-color: #fee2e2; border-left: 4px solid #ef4444; padding: 1rem 1.5rem; border-radius: 0.5rem; box-shadow: 0 10px 15px rgba(0,0,0,0.2); cursor: pointer;">
+            <svg style="width: 24px; height: 24px; color: #dc2626; margin-right: 0.75rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p style="color: #991b1b; font-weight: 500; margin: 0;">{{ session('error') }}</p>
+        </div>
+        @endif
+    </div>
+
+    <style>
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
             }
-            @keyframes slideOut {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
             }
-        </style>
+        }
 
-        <script>
-            setTimeout(() => {
-                const toast = document.getElementById('toast');
-                if (toast) {
-                    toast.style.animation = 'slideOut 0.3s ease-out';
-                    setTimeout(() => toast.remove(), 300);
-                }
-            }, 5000);
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
 
-            document.getElementById('toast')?.addEventListener('click', function() {
-                this.style.animation = 'slideOut 0.3s ease-out';
-                setTimeout(() => this.remove(), 300);
-            });
-        </script>
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    </style>
+
+    <script>
+        setTimeout(() => {
+            const toast = document.getElementById('toast');
+            if (toast) {
+                toast.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 5000);
+
+        document.getElementById('toast')?.addEventListener('click', function() {
+            this.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => this.remove(), 300);
+        });
+    </script>
     @endif
 
     <div style="display: flex; height: 100vh;">
-        
+
         <!-- Left Side - Image/Branding (Dynamic Gradient) -->
         <div id="gradientSide" class="gradient-bg" style="flex: 1; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%); position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 3rem; color: white;">
-            
+
             <!-- Decorative Elements -->
             <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.1; background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
-            
+
             <!-- Logo -->
             <div style="position: absolute; top: 2rem; left: 2rem; display: flex; align-items: center; gap: 0.75rem;">
                 <span id="logoText" style="font-size: 1.5rem; font-weight: 700; color: #3b82f6;">SchoolTrack</span>
@@ -107,10 +124,10 @@
 
         <!-- Right Side - Login Form -->
         <div style="flex: 1; background-color: #0a0a0a; display: flex; align-items: center; justify-content: center; padding: 2rem; position: relative; overflow-y: auto;">
-            
+
             <!-- Form Container -->
             <div style="width: 100%; max-width: 440px;">
-                
+
                 <!-- Header -->
                 <div style="margin-bottom: 2.5rem;">
                     <h2 style="font-size: 1.875rem; font-weight: 600; color: white; margin: 0 0 0.5rem 0;">
@@ -153,7 +170,7 @@
                             onblur="this.style.borderColor='{{ $errors->has('email') ? '#ef4444' : '#374151' }}'; this.style.boxShadow='none'"
                             placeholder="your.email@example.com">
                         @error('email')
-                            <p style="margin-top: 0.5rem; font-size: 0.875rem; color: #ef4444;">{{ $message }}</p>
+                        <p style="margin-top: 0.5rem; font-size: 0.875rem; color: #ef4444;">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -172,7 +189,7 @@
                     <!-- Remember Me -->
                     <div style="margin-bottom: 2rem;">
                         <label style="display: flex; align-items: center; cursor: pointer;">
-                            <input type="checkbox" name="remember" 
+                            <input type="checkbox" name="remember"
                                 style="width: 16px; height: 16px; border-radius: 0.25rem; border: 1px solid #374151; background-color: #1f2937; cursor: pointer;">
                             <span style="margin-left: 0.5rem; font-size: 0.875rem; color: #d1d5db;">
                                 Remember me for 30 days
@@ -187,13 +204,22 @@
                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(59, 130, 246, 0.3)'">
                         Sign in as <span id="roleText">Admin</span>
                     </button>
+
+                    <div id="registerLink" style="display: none; margin-top: 1rem; text-align: center;">
+                        <p style="font-size: 0.875rem; color: #9ca3af; margin: 0;">
+                            Don't have an account?
+                            <a href="{{ route('register') }}" style="color: #10b981; text-decoration: none; font-weight: 500;">
+                                Register as Student
+                            </a>
+                        </p>
+                    </div>
                 </form>
 
                 <!-- Footer -->
                 <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #1f2937; text-align: center;">
                     <p style="font-size: 0.75rem; color: #6b7280; margin: 0;">
-                        By signing in, you agree to our 
-                        <a href="#" style="color: #60a5fa; text-decoration: none;">Terms of Service</a> and 
+                        By signing in, you agree to our
+                        <a href="#" style="color: #60a5fa; text-decoration: none;">Terms of Service</a> and
                         <a href="#" style="color: #60a5fa; text-decoration: none;">Privacy Policy</a>
                     </p>
                 </div>
@@ -235,14 +261,18 @@
         };
 
         function selectRole(role) {
-            console.log('Selecting role:', role); // Debug log
-            
+            console.log('Selecting role:', role);
+
             // Update hidden input
             document.getElementById('roleInput').value = role;
-            
+
             const config = roleConfig[role];
-            const roleTextMap = { 'admin': 'Admin', 'teacher': 'Teacher', 'student': 'Student' };
-            
+            const roleTextMap = {
+                'admin': 'Admin',
+                'teacher': 'Teacher',
+                'student': 'Student'
+            };
+
             // Update all UI elements
             document.getElementById('roleText').textContent = roleTextMap[role];
             document.getElementById('gradientSide').style.background = config.gradient;
@@ -251,7 +281,15 @@
             document.getElementById('subHeading').textContent = config.subheading;
             document.getElementById('footerText').textContent = config.footer;
             document.getElementById('submitButton').style.background = config.buttonGradient;
-            
+
+            // Show/hide register link for students only
+            const registerLink = document.getElementById('registerLink');
+            if (role === 'student') {
+                registerLink.style.display = 'block';
+            } else {
+                registerLink.style.display = 'none';
+            }
+
             // Update tab styles
             ['admin', 'teacher', 'student'].forEach(tab => {
                 const button = document.getElementById('tab-' + tab);
@@ -263,14 +301,15 @@
                     button.style.color = '#9ca3af';
                 }
             });
-            
-            console.log('Role updated to:', role); // Debug log
+
+            console.log('Role updated to:', role);
         }
 
-        // Initialize with old role or default to admin
-        const oldRole = '{{ old('role', 'admin') }}';
-        console.log('Initial role:', oldRole); // Debug log
+        // Initialize with old role or default to admin - FIXED LINE
+        const oldRole = "{{ old('role', 'admin') }}";
+        console.log('Initial role:', oldRole);
         selectRole(oldRole);
     </script>
 </body>
+
 </html>

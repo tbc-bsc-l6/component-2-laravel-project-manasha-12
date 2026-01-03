@@ -7,6 +7,9 @@ use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\VerificationController;
+
 
 // Public route - Homepage
 Route::get('/', function () {
@@ -19,6 +22,27 @@ Route::middleware(['auth:admin,teacher,student,old_student'])->group(function ()
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 });
+
+// Registration Routes (Students Only)
+Route::get('/register', [RegisterController::class, 'create'])
+    ->middleware('guest')
+    ->name('register');
+
+Route::post('/register', [RegisterController::class, 'store'])
+    ->middleware('guest');
+
+// Email Verification Routes
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth:student')->name('verification.notice');
+
+Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
+    ->middleware(['auth:student', 'signed'])
+    ->name('verification.verify');
+
+Route::post('/email/verification-notification', [VerificationController::class, 'resend'])
+    ->middleware(['auth:student', 'throttle:6,1'])
+    ->name('verification.send');
 
 // Admin Routes
 Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
