@@ -141,12 +141,21 @@ class ModuleController extends Controller
             ->orderBy('completed_at', 'desc')
             ->get();
 
+        // ✅ Use filter for case-insensitive comparison
+        $totalPassed = $completedModules->filter(function($enrollment) {
+            return strtoupper(trim($enrollment->pass_status ?? '')) === 'PASS';
+        })->count();
+
+        $totalFailed = $completedModules->filter(function($enrollment) {
+            return strtoupper(trim($enrollment->pass_status ?? '')) === 'FAIL';
+        })->count();
+
         $stats = [
             'total_completed' => $completedModules->count(),
-            'total_passed' => $completedModules->where('pass_status', 'PASS')->count(),
-            'total_failed' => $completedModules->where('pass_status', 'FAIL')->count(),
+            'total_passed' => $totalPassed,
+            'total_failed' => $totalFailed,
             'pass_rate' => $completedModules->count() > 0 
-                ? round(($completedModules->where('pass_status', 'PASS')->count() / $completedModules->count()) * 100, 1)
+                ? round(($totalPassed / $completedModules->count()) * 100, 1)
                 : 0,
         ];
 
