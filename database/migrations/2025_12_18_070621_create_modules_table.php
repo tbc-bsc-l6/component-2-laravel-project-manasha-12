@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('modules', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->unique(); // e.g., AWE_14454
-            $table->string('name'); // e.g., Advanced Web Engineering
+            $table->string('code')->unique(); 
+            $table->string('name'); 
             $table->text('description')->nullable();
             $table->integer('max_students')->default(10);
             $table->boolean('is_available')->default(true);
