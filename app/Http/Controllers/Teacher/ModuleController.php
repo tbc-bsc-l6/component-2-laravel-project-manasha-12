@@ -27,10 +27,10 @@ class ModuleController extends Controller
                     $query->where('status', 'completed');
                 },
                 'enrollments as passed_students' => function ($query) {
-                    $query->where('status', 'completed')->where('pass_status', 'PASS');
+                    $query->where('status', 'completed')->where('pass_status', 'pass');
                 },
                 'enrollments as failed_students' => function ($query) {
-                    $query->where('status', 'completed')->where('pass_status', 'FAIL');
+                    $query->where('status', 'completed')->where('pass_status', 'fail');
                 }
             ])
             ->get();
@@ -67,10 +67,10 @@ class ModuleController extends Controller
             'total_students' => $module->enrollments()->count(),
             'active_students' => $activeEnrollments->count(),
             'completed_students' => $completedEnrollments->count(),
-            'passed_students' => $completedEnrollments->where('pass_status', 'PASS')->count(),
-            'failed_students' => $completedEnrollments->where('pass_status', 'FAIL')->count(),
+            'passed_students' => $completedEnrollments->where('pass_status', 'pass')->count(),
+            'failed_students' => $completedEnrollments->where('pass_status', 'fail')->count(),
             'pass_rate' => $completedEnrollments->count() > 0 
-                ? round(($completedEnrollments->where('pass_status', 'PASS')->count() / $completedEnrollments->count()) * 100, 1)
+                ? round(($completedEnrollments->where('pass_status', 'pass')->count() / $completedEnrollments->count()) * 100, 1)
                 : 0,
         ];
 

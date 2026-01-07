@@ -31,7 +31,7 @@
         <!-- Statistics Cards -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
             <div style="background-color: var(--card-bg, white); border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid #3b82f6;">
-                <p style="font-size: 0.875rem; color: var(--text-secondary, #6b7280); margin: 0 0 0.5rem 0;">Total Students</p>
+                <p style="font-size: 0.875rem; color: var(--text-secondary, #6b7280); margin: 0 0 0.5rem 0;">Total Students Taught</p>
                 <p style="font-size: 2rem; font-weight: 700; color: var(--text-primary, #111827); margin: 0;">{{ $stats['total_students'] }}</p>
             </div>
             <div style="background-color: var(--card-bg, white); border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid #f59e0b;">
