@@ -78,10 +78,10 @@ class GradingController extends Controller
             'total' => $module->enrollments()->count(),
             'pending' => $pendingStudents->count(),
             'completed' => $completedStudents->count(),
-            'passed' => $completedStudents->where('pass_status', 'PASS')->count(),
-            'failed' => $completedStudents->where('pass_status', 'FAIL')->count(),
+            'passed' => $completedStudents->where('pass_status', 'pass')->count(),
+            'failed' => $completedStudents->where('pass_status', 'fail')->count(),
             'pass_rate' => $completedStudents->count() > 0 
-                ? round(($completedStudents->where('pass_status', 'PASS')->count() / $completedStudents->count()) * 100, 1)
+                ? round(($completedStudents->where('pass_status', 'pass')->count() / $completedStudents->count()) * 100, 1)
                 : 0,
         ];
 
