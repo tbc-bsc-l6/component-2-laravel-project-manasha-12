@@ -37,7 +37,7 @@
                     <div>
                         <p class="text-sm font-medium text-blue-600 mb-1">Total Students</p>
                         <p class="text-3xl font-bold text-blue-900">{{ $stats['total_students'] ?? 0 }}</p>
-                        <p class="text-xs text-blue-600 mt-1">Across all modules</p>
+                        <p class="text-xs text-blue-600 mt-1">Active across all modules</p>
                     </div>
                     <div class="bg-blue-500 rounded-full p-4">
                         <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
