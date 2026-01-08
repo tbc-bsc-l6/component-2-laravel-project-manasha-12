@@ -14,7 +14,7 @@ use App\Http\Controllers\Auth\VerificationController;
 // Public route - Homepage
 Route::get('/', function () {
     return view('welcome');
-});
+})-> name('welcome');
 
 Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');
 
