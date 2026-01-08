@@ -157,8 +157,8 @@
                             <tbody>
                                 @foreach($module->activeEnrollments as $enrollment)
                                     <tr style="border-bottom: 1px solid #e5e7eb;">
-                                        <td style="padding: 1rem; font-size: 0.875rem; color: #111827; font-weight: 500;">{{ $enrollment->user ? $enrollment->user->name : 'Unknown' }}</td>
-                                        <td style="padding: 1rem; font-size: 0.875rem; color: #6b7280;">{{ $enrollment->user ? $enrollment->user->email : 'N/A' }}</td>
+                                        <td style="padding: 1rem; font-size: 0.875rem; color: #111827; font-weight: 500;">{{ $enrollment->student ? $enrollment->student->name : 'Unknown' }}</td>
+                                        <td style="padding: 1rem; font-size: 0.875rem; color: #6b7280;">{{ $enrollment->student ? $enrollment->student->email : 'N/A' }}</td>
                                         <td style="padding: 1rem; font-size: 0.875rem; color: #6b7280;">{{ $enrollment->enrolled_at->format('M d, Y') }}</td>
                                         <td style="padding: 1rem;">
                                             <span style="display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; background-color: #d1fae5; color: #065f46;">
