@@ -1,192 +1,317 @@
 <x-admin-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Admin Dashboard') }}
+        <h2 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 1.75rem; font-weight: 600; color: #1a1a1a; margin: 0;">
+            Dashboard Overview
         </h2>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div style="padding: 2rem 0; background-color: #fdfcfb;">
+        <div style="max-width: 1400px; margin: 0 auto; padding: 0 2rem;">
             
             <!-- Success Message -->
             @if (session('success'))
-                <div class="mb-6 bg-green-100 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded">
-                    <p class="font-medium">{{ session('success') }}</p>
+                <div style="margin-bottom: 2rem; background-color: #d1fae5; border-left: 4px solid #10b981; color: #065f46; padding: 1rem 1.5rem; border-radius: 16px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);">
+                    <p style="font-weight: 600; margin: 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.9375rem;">{{ session('success') }}</p>
                 </div>
             @endif
 
-            <!-- Stats Grid with Icons and Colors -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
                 
-                <!-- Total Modules - Yellow -->
-                <div class="bg-gradient-to-br from-yellow-100 to-yellow-50 overflow-hidden shadow-sm sm:rounded-xl p-6 border border-yellow-200">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-yellow-600 mb-1">Total Modules</p>
-                            <p class="text-3xl font-bold text-yellow-900">{{ $stats['total_modules'] }}</p>
-                            <p class="text-xs text-yellow-600 mt-1">Completed and running</p>
-                        </div>
-                        <div class="bg-yellow-500 rounded-full p-4">
-                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Active Modules - Purple -->
-                <div class="bg-gradient-to-br from-purple-100 to-purple-50 overflow-hidden shadow-sm sm:rounded-xl p-6 border border-purple-200">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-purple-600 mb-1">Active Modules</p>
-                            <p class="text-3xl font-bold text-purple-900">{{ $stats['active_modules'] }}</p>
-                            <p class="text-xs text-purple-600 mt-1">Available now</p>
-                        </div>
-                        <div class="bg-purple-500 rounded-full p-4">
-                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Total Teachers - Green -->
-                <div class="bg-gradient-to-br from-green-100 to-green-50 overflow-hidden shadow-sm sm:rounded-xl p-6 border border-green-200">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-green-600 mb-1">Total Teachers</p>
-                            <p class="text-3xl font-bold text-green-900">{{ $stats['total_teachers'] }}</p>
-                            <p class="text-xs text-green-600 mt-1">+44% active</p>
-                        </div>
-                        <div class="bg-green-500 rounded-full p-4">
-                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Total Students - Red/Pink -->
-                <div class="bg-gradient-to-br from-red-100 to-red-50 overflow-hidden shadow-sm sm:rounded-xl p-6 border border-red-200">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-red-600 mb-1">Total Active Students</p>
-                            <p class="text-3xl font-bold text-red-900">{{ $stats['total_students'] }}</p>
-                            <p class="text-xs text-red-600 mt-1">Enrolled students</p>
-                        </div>
-                        <div class="bg-red-500 rounded-full p-4">
-                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Quick Actions Section with Grid -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl p-6 mb-8">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-semibold text-gray-900">Quick Actions</h3>
-                    <span class="text-sm text-gray-500">Manage your system</span>
-                </div>
-                
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <!-- Left Column - Main Content -->
+                <div>
                     
-                    <!-- Add Module -->
-                    <a href="{{ route('admin.modules.create') }}" 
-                       class="group bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-md hover:shadow-xl transform hover:-translate-y-1">
-                        <div class="flex flex-col items-center text-center space-y-3">
-                            <div class="bg-white/20 rounded-full p-3">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                                </svg>
-                            </div>
-                            <span class="font-semibold text-base">Add Module</span>
-                        </div>
-                    </a>
+                    <!-- Welcome Section -->
+                    <div style="margin-bottom: 2rem;">
+                        <h1 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 2.5rem; font-weight: 700; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.2;">
+                            Welcome back 👋
+                        </h1>
+                        <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1rem; color: #6b7280; margin: 0; font-weight: 500;">
+                            Here's what's happening in your institution today
+                        </p>
+                    </div>
 
-                    <!-- Add Teacher -->
-                    <a href="{{ route('admin.teachers.create') }}" 
-                       class="group bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-xl text-white hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-xl transform hover:-translate-y-1">
-                        <div class="flex flex-col items-center text-center space-y-3">
-                            <div class="bg-white/20 rounded-full p-3">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
-                                </svg>
-                            </div>
-                            <span class="font-semibold text-base">Add Teacher</span>
-                        </div>
-                    </a>
+                    <!-- Filter Tabs -->
+                    <div style="display: flex; gap: 0.75rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                        <button style="padding: 0.75rem 1.5rem; background-color: #1a1a1a; color: white; border: none; border-radius: 50px; font-size: 0.875rem; font-weight: 600; cursor: pointer; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; transition: all 0.2s;"
+                                onmouseover="this.style.transform='scale(1.05)'"
+                                onmouseout="this.style.transform='scale(1)'">
+                            🎯 All
+                        </button>
+                        <button style="padding: 0.75rem 1.5rem; background-color: #f3f4f6; color: #1a1a1a; border: none; border-radius: 50px; font-size: 0.875rem; font-weight: 600; cursor: pointer; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; transition: all 0.2s;"
+                                onmouseover="this.style.backgroundColor='#e5e7eb'"
+                                onmouseout="this.style.backgroundColor='#f3f4f6'">
+                            📚 Modules
+                        </button>
+                        <button style="padding: 0.75rem 1.5rem; background-color: #f3f4f6; color: #1a1a1a; border: none; border-radius: 50px; font-size: 0.875rem; font-weight: 600; cursor: pointer; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; transition: all 0.2s;"
+                                onmouseover="this.style.backgroundColor='#e5e7eb'"
+                                onmouseout="this.style.backgroundColor='#f3f4f6'">
+                            👨‍🏫 Teachers
+                        </button>
+                        <button style="padding: 0.75rem 1.5rem; background-color: #f3f4f6; color: #1a1a1a; border: none; border-radius: 50px; font-size: 0.875rem; font-weight: 600; cursor: pointer; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; transition: all 0.2s;"
+                                onmouseover="this.style.backgroundColor='#e5e7eb'"
+                                onmouseout="this.style.backgroundColor='#f3f4f6'">
+                            🎓 Students
+                        </button>
+                    </div>
 
-                    <!-- Manage Modules -->
-                    <a href="{{ route('admin.modules.index') }}" 
-                       class="group bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-xl text-white hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-md hover:shadow-xl transform hover:-translate-y-1">
-                        <div class="flex flex-col items-center text-center space-y-3">
-                            <div class="bg-white/20 rounded-full p-3">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                                </svg>
-                            </div>
-                            <span class="font-semibold text-base">View Modules</span>
-                        </div>
-                    </a>
+                    <!-- Section Title -->
+                    <div style="margin-bottom: 1.25rem;">
+                        <h3 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; font-weight: 600; color: #6b7280; margin: 0; text-transform: uppercase; letter-spacing: 0.1em;">
+                            Quick Actions
+                        </h3>
+                    </div>
 
-                    <!-- Manage Users -->
-                    <a href="{{ route('admin.users.index') }}" 
-                       class="group bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-xl text-white hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-md hover:shadow-xl transform hover:-translate-y-1">
-                        <div class="flex flex-col items-center text-center space-y-3">
-                            <div class="bg-white/20 rounded-full p-3">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                                </svg>
+                    <!-- Action Cards Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-bottom: 2rem;">
+                        
+                        <!-- Create Module Card -->
+                        <a href="{{ route('admin.modules.create') }}" style="text-decoration: none;">
+                            <div style="background: #fecaca; border-radius: 24px; padding: 2rem; transition: all 0.3s; cursor: pointer; position: relative;"
+                                 onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 16px 32px rgba(252, 165, 165, 0.3)'"
+                                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                <div style="position: absolute; top: 1.25rem; right: 1.25rem;">
+                                    <div style="background: white; padding: 0.5rem 0.875rem; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                        <span style="font-size: 1.25rem; color: #7f1d1d; font-weight: 700; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ $stats['total_modules'] }}</span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.875rem; margin-bottom: 1.25rem;">
+                                    <div style="background: #fee2e2; border-radius: 14px; padding: 0.75rem; display: inline-flex;">
+                                        <svg style="width: 28px; height: 28px; color: #7f1d1d;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                        </svg>
+                                    </div>
+                                    <span style="font-size: 0.75rem; font-weight: 700; color: #7f1d1d; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; text-transform: uppercase; letter-spacing: 0.05em;">MODULES</span>
+                                </div>
+                                <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.3;">
+                                    Create New Module
+                                </h4>
+                                <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; color: #7f1d1d; margin: 0; font-weight: 500;">
+                                    Add courses and educational content
+                                </p>
                             </div>
-                            <span class="font-semibold text-base">Manage Users</span>
+                        </a>
+
+                        <!-- Add Teacher Card -->
+                        <a href="{{ route('admin.teachers.create') }}" style="text-decoration: none;">
+                            <div style="background: #fde68a; border-radius: 24px; padding: 2rem; transition: all 0.3s; cursor: pointer; position: relative;"
+                                 onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 16px 32px rgba(253, 224, 71, 0.3)'"
+                                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                <div style="position: absolute; top: 1.25rem; right: 1.25rem;">
+                                    <div style="background: white; padding: 0.5rem 0.875rem; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                        <span style="font-size: 1.25rem; color: #713f12; font-weight: 700; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ $stats['total_teachers'] }}</span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.875rem; margin-bottom: 1.25rem;">
+                                    <div style="background: #fef3c7; border-radius: 14px; padding: 0.75rem; display: inline-flex;">
+                                        <svg style="width: 28px; height: 28px; color: #713f12;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                        </svg>
+                                    </div>
+                                    <span style="font-size: 0.75rem; font-weight: 700; color: #713f12; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; text-transform: uppercase; letter-spacing: 0.05em;">TEACHERS</span>
+                                </div>
+                                <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.3;">
+                                    Add New Teacher
+                                </h4>
+                                <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; color: #78350f; margin: 0; font-weight: 500;">
+                                    Onboard teaching staff members
+                                </p>
+                            </div>
+                        </a>
+
+                        <!-- View Modules Card -->
+                        <a href="{{ route('admin.modules.index') }}" style="text-decoration: none;">
+                            <div style="background: #d8b4fe; border-radius: 24px; padding: 2rem; transition: all 0.3s; cursor: pointer; position: relative;"
+                                 onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 16px 32px rgba(216, 180, 254, 0.3)'"
+                                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                <div style="position: absolute; top: 1.25rem; right: 1.25rem;">
+                                    <div style="background: white; padding: 0.5rem 0.875rem; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                        <span style="font-size: 1.25rem; color: #581c87; font-weight: 700; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ $stats['active_modules'] }}</span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.875rem; margin-bottom: 1.25rem;">
+                                    <div style="background: #e9d5ff; border-radius: 14px; padding: 0.75rem; display: inline-flex;">
+                                        <svg style="width: 28px; height: 28px; color: #581c87;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                        </svg>
+                                    </div>
+                                    <span style="font-size: 0.75rem; font-weight: 700; color: #581c87; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; text-transform: uppercase; letter-spacing: 0.05em;">MANAGEMENT</span>
+                                </div>
+                                <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.3;">
+                                    Manage All Modules
+                                </h4>
+                                <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; color: #6b21a8; margin: 0; font-weight: 500;">
+                                    View and edit course modules
+                                </p>
+                            </div>
+                        </a>
+
+                        <!-- Manage Users Card -->
+                        <a href="{{ route('admin.users.index') }}" style="text-decoration: none;">
+                            <div style="background: #86efac; border-radius: 24px; padding: 2rem; transition: all 0.3s; cursor: pointer; position: relative;"
+                                 onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 16px 32px rgba(134, 239, 172, 0.3)'"
+                                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                <div style="position: absolute; top: 1.25rem; right: 1.25rem;">
+                                    <div style="background: white; padding: 0.5rem 0.875rem; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                        <span style="font-size: 1.25rem; color: #064e3b; font-weight: 700; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ $stats['total_students'] }}</span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.875rem; margin-bottom: 1.25rem;">
+                                    <div style="background: #bbf7d0; border-radius: 14px; padding: 0.75rem; display: inline-flex;">
+                                        <svg style="width: 28px; height: 28px; color: #064e3b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                        </svg>
+                                    </div>
+                                    <span style="font-size: 0.75rem; font-weight: 700; color: #064e3b; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; text-transform: uppercase; letter-spacing: 0.05em;">USERS</span>
+                                </div>
+                                <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.3;">
+                                    User Management
+                                </h4>
+                                <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; color: #047857; margin: 0; font-weight: 500;">
+                                    Manage all system users
+                                </p>
+                            </div>
+                        </a>
+
+                    </div>
+
+                    <!-- Recent Activity - Full Width -->
+                    <div style="background: white; border-radius: 24px; padding: 2rem; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04); border: 1px solid #f3f4f6;">
+                        <h3 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.125rem; font-weight: 600; color: #1a1a1a; margin: 0 0 1.5rem 0;">
+                            Recent Activity
+                        </h3>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                            <!-- Modules Activity -->
+                            <a href="{{ route('admin.modules.index') }}" style="text-decoration: none;">
+                                <div style="background: #fde68a; border-radius: 18px; padding: 1.5rem; transition: all 0.3s; cursor: pointer;"
+                                     onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 16px rgba(253, 224, 71, 0.2)'"
+                                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                        <div style="background: #fef3c7; border-radius: 12px; padding: 0.75rem; display: inline-flex;">
+                                            <svg style="width: 24px; height: 24px; color: #713f12;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.25rem 0;">
+                                                Available Modules
+                                            </h4>
+                                            <span style="font-size: 1.5rem; color: #713f12; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 700;">{{ $stats['active_modules'] }}</span>
+                                        </div>
+                                    </div>
+                                    <p style="font-size: 0.75rem; color: #78350f; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 600; margin: 0;">Active now</p>
+                                </div>
+                            </a>
+
+                            <!-- Teachers Activity -->
+                            <a href="{{ route('admin.teachers.index') }}" style="text-decoration: none;">
+                                <div style="background: #d8b4fe; border-radius: 18px; padding: 1.5rem; transition: all 0.3s; cursor: pointer;"
+                                     onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 16px rgba(216, 180, 254, 0.2)'"
+                                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                        <div style="background: #e9d5ff; border-radius: 12px; padding: 0.75rem; display: inline-flex;">
+                                            <svg style="width: 24px; height: 24px; color: #581c87;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.25rem 0;">
+                                                Teaching Staff
+                                            </h4>
+                                            <span style="font-size: 1.5rem; color: #581c87; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 700;">{{ $stats['total_teachers'] }}</span>
+                                        </div>
+                                    </div>
+                                    <p style="font-size: 0.75rem; color: #6b21a8; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 600; margin: 0;">Registered</p>
+                                </div>
+                            </a>
+
+                            <!-- Enrollments Activity -->
+                            <a href="{{ route('admin.enrollments.index') }}" style="text-decoration: none;">
+                                <div style="background: #fecaca; border-radius: 18px; padding: 1.5rem; transition: all 0.3s; cursor: pointer;"
+                                     onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 16px rgba(252, 165, 165, 0.2)'"
+                                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                        <div style="background: #fee2e2; border-radius: 12px; padding: 0.75rem; display: inline-flex;">
+                                            <svg style="width: 24px; height: 24px; color: #7f1d1d;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.25rem 0;">
+                                                Enrollments
+                                            </h4>
+                                            <span style="font-size: 1.5rem; color: #7f1d1d; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 700;">{{ $stats['active_enrollments'] }}</span>
+                                        </div>
+                                    </div>
+                                    <p style="font-size: 0.75rem; color: #991b1b; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 600; margin: 0;">Active</p>
+                                </div>
+                            </a>
                         </div>
-                    </a>
+                    </div>
 
                 </div>
-            </div>
 
-            <!-- Recent Activity Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
-                <!-- Active Enrollments -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Enrollments</h3>
-                        <a href="{{ route('admin.enrollments.index') }}" class="text-sm text-blue-600 hover:text-blue-800">View all →</a>
-                    </div>
-                    <div class="flex items-center justify-center py-8">
-                        <div class="text-center">
-                            <div class="bg-indigo-100 rounded-full p-6 inline-block mb-4">
-                                <svg class="h-12 w-12 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                                </svg>
+                <!-- Right Column - Sidebar -->
+                <div>
+                    
+                    <!-- Profile Card -->
+                    <div style="background: white; border-radius: 24px; padding: 2rem; margin-bottom: 1.5rem; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04); border: 1px solid #f3f4f6;">
+                        <div style="text-align: center;">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background: #fca5a5; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(252, 165, 165, 0.3);">
+                                <span style="font-size: 2rem; color: #1a1a1a; font-weight: 700; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ substr(auth('admin')->user()->name, 0, 1) }}</span>
                             </div>
-                            <p class="text-4xl font-bold text-gray-900 mb-2">{{ $stats['active_enrollments'] }}</p>
-                            <p class="text-sm text-gray-600">Active enrollments</p>
+                            <h3 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.125rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.25rem 0;">
+                                {{ auth('admin')->user()->name }}
+                            </h3>
+                            <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.8125rem; color: #6b7280; margin: 0 0 1.25rem 0; font-weight: 500;">
+                                System Administrator
+                            </p>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #f3f4f6;">
+                                <div style="text-align: center;">
+                                    <p style="font-size: 1.5rem; font-weight: 700; color: #1a1a1a; margin: 0 0 0.125rem 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ $stats['total_modules'] }}</p>
+                                    <p style="font-size: 0.75rem; color: #6b7280; margin: 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 600;">Modules</p>
+                                </div>
+                                <div style="width: 1px; height: 32px; background: #e5e7eb;"></div>
+                                <div style="text-align: center;">
+                                    <p style="font-size: 1.5rem; font-weight: 700; color: #1a1a1a; margin: 0 0 0.125rem 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ $stats['total_teachers'] }}</p>
+                                    <p style="font-size: 0.75rem; color: #6b7280; margin: 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 600;">Teachers</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- System Overview -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">System Overview</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">Available Modules</span>
-                            <span class="text-lg font-bold text-green-600">{{ $stats['active_modules'] }}</span>
+                    <!-- Activity Chart -->
+                    <div style="background: white; border-radius: 24px; padding: 2rem; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04); border: 1px solid #f3f4f6;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+                            <h3 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.125rem; font-weight: 600; color: #1a1a1a; margin: 0;">
+                                Weekly Activity
+                            </h3>
                         </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">Total Teachers</span>
-                            <span class="text-lg font-bold text-purple-600">{{ $stats['total_teachers'] }}</span>
+                        <div style="margin-bottom: 1.5rem;">
+                            <p style="font-size: 2.5rem; font-weight: 700; color: #1a1a1a; margin: 0 0 0.25rem 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ $stats['active_enrollments'] }}</p>
+                            <p style="font-size: 0.875rem; color: #6b7280; margin: 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 500;">Total enrollments this week</p>
                         </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">Total Students</span>
-                            <span class="text-lg font-bold text-blue-600">{{ $stats['total_students'] }}</span>
+                        <!-- Simple Bar Chart -->
+                        <div style="display: flex; align-items: flex-end; gap: 0.5rem; height: 100px;">
+                            <div style="flex: 1; background: #fca5a5; border-radius: 12px 12px 0 0; height: 55%;"></div>
+                            <div style="flex: 1; background: #fde68a; border-radius: 12px 12px 0 0; height: 70%;"></div>
+                            <div style="flex: 1; background: #86efac; border-radius: 12px 12px 0 0; height: 45%;"></div>
+                            <div style="flex: 1; background: #93c5fd; border-radius: 12px 12px 0 0; height: 75%;"></div>
+                            <div style="flex: 1; background: #d8b4fe; border-radius: 12px 12px 0 0; height: 60%;"></div>
+                            <div style="flex: 1; background: #fca5a5; border-radius: 12px 12px 0 0; height: 85%;"></div>
+                            <div style="flex: 1; background: #1a1a1a; border-radius: 12px 12px 0 0; height: 100%;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 0.75rem; padding: 0 0.25rem;">
+                            <span style="font-size: 0.625rem; color: #9ca3af; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 600;">MON</span>
+                            <span style="font-size: 0.625rem; color: #9ca3af; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 600;">TUE</span>
+                            <span style="font-size: 0.625rem; color: #9ca3af; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 600;">WED</span>
+                            <span style="font-size: 0.625rem; color: #9ca3af; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 600;">THU</span>
+                            <span style="font-size: 0.625rem; color: #9ca3af; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 600;">FRI</span>
+                            <span style="font-size: 0.625rem; color: #9ca3af; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 600;">SAT</span>
+                            <span style="font-size: 0.625rem; color: #1a1a1a; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 700;">SUN</span>
                         </div>
                     </div>
+
                 </div>
 
             </div>

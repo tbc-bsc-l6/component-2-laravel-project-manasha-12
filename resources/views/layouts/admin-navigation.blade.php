@@ -7,7 +7,7 @@
                 <!-- Logo (Text) -->
                 <div style="flex-shrink: 0;">
                     <a href="{{ route('admin.dashboard') }}" style="text-decoration: none; display: flex; align-items: center;">
-                        <span style="font-family: 'Playfair Display', serif; font-size: 1.875rem; font-weight: 900; color: #1a1a1a; font-style: italic;">p/m.</span>
+                        <span style="font-family: 'Playfair Display', serif; font-size: 1.875rem; font-weight: 900; color: #1a1a1a; font-style: italic;">s/t.</span>
                     </a>
                 </div>
 
