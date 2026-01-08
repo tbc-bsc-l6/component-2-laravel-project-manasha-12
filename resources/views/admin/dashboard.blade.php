@@ -1,6 +1,6 @@
 <x-admin-layout>
     <x-slot name="header">
-        <h2 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 1.75rem; font-weight: 600; color: #1a1a1a; margin: 0;">
+        <h2 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 1.75rem; font-weight: 60; color: #1a1a1a; margin: 0;">
             Dashboard Overview
         </h2>
     </x-slot>
@@ -22,7 +22,7 @@
                     
                     <!-- Welcome Section -->
                     <div style="margin-bottom: 2rem;">
-                        <h1 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 2.5rem; font-weight: 700; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.2;">
+                        <h1 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 2.7rem; font-weight: 70; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.2;">
                             Welcome back 👋
                         </h1>
                         <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1rem; color: #6b7280; margin: 0; font-weight: 500;">
@@ -32,22 +32,22 @@
 
                     <!-- Filter Tabs -->
                     <div style="display: flex; gap: 0.75rem; margin-bottom: 2rem; flex-wrap: wrap;">
-                        <button style="padding: 0.75rem 1.5rem; background-color: #1a1a1a; color: white; border: none; border-radius: 50px; font-size: 0.875rem; font-weight: 600; cursor: pointer; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; transition: all 0.2s;"
+                        <button style="padding: 0.75rem 1.5rem; background-color: #1a1a1a; color: white; border: none; border-radius: 50px; font-size: 0.875rem; font-weight: 60; cursor: pointer; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; transition: all 0.2s;"
                                 onmouseover="this.style.transform='scale(1.05)'"
                                 onmouseout="this.style.transform='scale(1)'">
                             🎯 All
                         </button>
-                        <button style="padding: 0.75rem 1.5rem; background-color: #f3f4f6; color: #1a1a1a; border: none; border-radius: 50px; font-size: 0.875rem; font-weight: 600; cursor: pointer; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; transition: all 0.2s;"
+                        <button style="padding: 0.75rem 1.5rem; background-color: #f3f4f6; color: #1a1a1a; border: none; border-radius: 50px; font-size: 0.875rem; font-weight: 60; cursor: pointer; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; transition: all 0.2s;"
                                 onmouseover="this.style.backgroundColor='#e5e7eb'"
                                 onmouseout="this.style.backgroundColor='#f3f4f6'">
                             📚 Modules
                         </button>
-                        <button style="padding: 0.75rem 1.5rem; background-color: #f3f4f6; color: #1a1a1a; border: none; border-radius: 50px; font-size: 0.875rem; font-weight: 600; cursor: pointer; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; transition: all 0.2s;"
+                        <button style="padding: 0.75rem 1.5rem; background-color: #f3f4f6; color: #1a1a1a; border: none; border-radius: 50px; font-size: 0.875rem; font-weight: 60; cursor: pointer; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; transition: all 0.2s;"
                                 onmouseover="this.style.backgroundColor='#e5e7eb'"
                                 onmouseout="this.style.backgroundColor='#f3f4f6'">
                             👨‍🏫 Teachers
                         </button>
-                        <button style="padding: 0.75rem 1.5rem; background-color: #f3f4f6; color: #1a1a1a; border: none; border-radius: 50px; font-size: 0.875rem; font-weight: 600; cursor: pointer; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; transition: all 0.2s;"
+                        <button style="padding: 0.75rem 1.5rem; background-color: #f3f4f6; color: #1a1a1a; border: none; border-radius: 50px; font-size: 0.875rem; font-weight: 60; cursor: pointer; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; transition: all 0.2s;"
                                 onmouseover="this.style.backgroundColor='#e5e7eb'"
                                 onmouseout="this.style.backgroundColor='#f3f4f6'">
                             🎓 Students
@@ -82,7 +82,7 @@
                                     </div>
                                     <span style="font-size: 0.75rem; font-weight: 700; color: #7f1d1d; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; text-transform: uppercase; letter-spacing: 0.05em;">MODULES</span>
                                 </div>
-                                <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.3;">
+                                <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.4rem; font-weight: 500; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.3;">
                                     Create New Module
                                 </h4>
                                 <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; color: #7f1d1d; margin: 0; font-weight: 500;">
@@ -109,7 +109,7 @@
                                     </div>
                                     <span style="font-size: 0.75rem; font-weight: 700; color: #713f12; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; text-transform: uppercase; letter-spacing: 0.05em;">TEACHERS</span>
                                 </div>
-                                <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.3;">
+                                <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.4rem; font-weight: 500; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.3;">
                                     Add New Teacher
                                 </h4>
                                 <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; color: #78350f; margin: 0; font-weight: 500;">
@@ -136,7 +136,7 @@
                                     </div>
                                     <span style="font-size: 0.75rem; font-weight: 700; color: #581c87; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; text-transform: uppercase; letter-spacing: 0.05em;">MANAGEMENT</span>
                                 </div>
-                                <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.3;">
+                                <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.4rem; font-weight: 500; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.3;">
                                     Manage All Modules
                                 </h4>
                                 <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; color: #6b21a8; margin: 0; font-weight: 500;">
@@ -163,7 +163,7 @@
                                     </div>
                                     <span style="font-size: 0.75rem; font-weight: 700; color: #064e3b; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; text-transform: uppercase; letter-spacing: 0.05em;">USERS</span>
                                 </div>
-                                <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.3;">
+                                <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.4rem; font-weight: 500; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.3;">
                                     User Management
                                 </h4>
                                 <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; color: #047857; margin: 0; font-weight: 500;">
@@ -193,7 +193,7 @@
                                             </svg>
                                         </div>
                                         <div>
-                                            <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.25rem 0;">
+                                            <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; font-weight: 500; color: #1a1a1a; margin: 0 0 0.25rem 0;">
                                                 Available Modules
                                             </h4>
                                             <span style="font-size: 1.5rem; color: #713f12; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 700;">{{ $stats['active_modules'] }}</span>
@@ -215,7 +215,7 @@
                                             </svg>
                                         </div>
                                         <div>
-                                            <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.25rem 0;">
+                                            <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; font-weight: 500; color: #1a1a1a; margin: 0 0 0.25rem 0;">
                                                 Teaching Staff
                                             </h4>
                                             <span style="font-size: 1.5rem; color: #581c87; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 700;">{{ $stats['total_teachers'] }}</span>
@@ -237,7 +237,7 @@
                                             </svg>
                                         </div>
                                         <div>
-                                            <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.25rem 0;">
+                                            <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; font-weight: 500; color: #1a1a1a; margin: 0 0 0.25rem 0;">
                                                 Enrollments
                                             </h4>
                                             <span style="font-size: 1.5rem; color: #7f1d1d; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 700;">{{ $stats['active_enrollments'] }}</span>
@@ -260,7 +260,7 @@
                             <div style="width: 80px; height: 80px; border-radius: 50%; background: #fca5a5; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(252, 165, 165, 0.3);">
                                 <span style="font-size: 2rem; color: #1a1a1a; font-weight: 700; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ substr(auth('admin')->user()->name, 0, 1) }}</span>
                             </div>
-                            <h3 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.125rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.25rem 0;">
+                            <h3 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.3rem; font-weight: 500; color: #1a1a1a; margin: 0 0 0.25rem 0;">
                                 {{ auth('admin')->user()->name }}
                             </h3>
                             <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.8125rem; color: #6b7280; margin: 0 0 1.25rem 0; font-weight: 500;">
