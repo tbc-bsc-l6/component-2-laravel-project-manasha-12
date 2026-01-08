@@ -70,7 +70,7 @@
                 <div class="bg-gradient-to-br from-red-100 to-red-50 overflow-hidden shadow-sm sm:rounded-xl p-6 border border-red-200">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-medium text-red-600 mb-1">Total Students</p>
+                            <p class="text-sm font-medium text-red-600 mb-1">Total Active Students</p>
                             <p class="text-3xl font-bold text-red-900">{{ $stats['total_students'] }}</p>
                             <p class="text-xs text-red-600 mt-1">Enrolled students</p>
                         </div>

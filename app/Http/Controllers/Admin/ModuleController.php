@@ -32,7 +32,7 @@ class ModuleController extends Controller
             'code' => ['required', 'string', 'max:20', 'unique:modules,code'],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'max_students' => ['required', 'integer', 'min:1', 'max:100'],
+            'max_students' => ['required', 'integer', 'min:1', 'max:10'],
             'is_available' => ['boolean'],
         ]);
 
