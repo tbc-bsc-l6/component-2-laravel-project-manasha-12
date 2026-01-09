@@ -2,262 +2,336 @@
 
 @section('content')
 
-<div class="py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div style="padding: 2rem 0; background-color: #fdfcfb;">
+    <div style="max-width: 1400px; margin: 0 auto; padding: 0 2rem;">
         
         <!-- Success Message -->
         @if (session('success'))
-            <div class="mb-6 bg-green-100 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded">
-                <p class="font-medium">{{ session('success') }}</p>
+            <div style="margin-bottom: 2rem; background-color: #d1fae5; border-left: 4px solid #10b981; color: #065f46; padding: 1rem 1.5rem; border-radius: 16px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);">
+                <p style="font-weight: 600; margin: 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.9375rem;">{{ session('success') }}</p>
             </div>
         @endif
 
-        <!-- Stats Grid with Icons and Colors (Matching Admin) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
             
-            <!-- Assigned Modules - Purple -->
-            <div class="bg-gradient-to-br from-purple-100 to-purple-50 overflow-hidden shadow-sm sm:rounded-xl p-6 border border-purple-200">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-purple-600 mb-1">Assigned Modules</p>
-                        <p class="text-3xl font-bold text-purple-900">{{ $stats['total_modules'] ?? 0 }}</p>
-                        <p class="text-xs text-purple-600 mt-1">Your teaching modules</p>
-                    </div>
-                    <div class="bg-purple-500 rounded-full p-4">
-                        <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Total Students - Blue -->
-            <div class="bg-gradient-to-br from-blue-100 to-blue-50 overflow-hidden shadow-sm sm:rounded-xl p-6 border border-blue-200">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-blue-600 mb-1">Total Students</p>
-                        <p class="text-3xl font-bold text-blue-900">{{ $stats['total_students'] ?? 0 }}</p>
-                        <p class="text-xs text-blue-600 mt-1">Active across all modules</p>
-                    </div>
-                    <div class="bg-blue-500 rounded-full p-4">
-                        <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pending Evaluations - Orange -->
-            <div class="bg-gradient-to-br from-orange-100 to-orange-50 overflow-hidden shadow-sm sm:rounded-xl p-6 border border-orange-200">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-orange-600 mb-1">Pending Evaluations</p>
-                        <p class="text-3xl font-bold text-orange-900">{{ $stats['pending_evaluations'] ?? 0 }}</p>
-                        <p class="text-xs text-orange-600 mt-1">Need grading</p>
-                    </div>
-                    <div class="bg-orange-500 rounded-full p-4">
-                        <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Completed Evaluations - Green -->
-            <div class="bg-gradient-to-br from-green-100 to-green-50 overflow-hidden shadow-sm sm:rounded-xl p-6 border border-green-200">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-green-600 mb-1">Completed</p>
-                        <p class="text-3xl font-bold text-green-900">{{ $stats['completed_evaluations'] ?? 0 }}</p>
-                        <p class="text-xs text-green-600 mt-1">Successfully graded</p>
-                    </div>
-                    <div class="bg-green-500 rounded-full p-4">
-                        <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Quick Actions Section with Grid -->
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl p-6 mb-8">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-lg font-semibold text-gray-900">Quick Actions</h3>
-                <span class="text-sm text-gray-500">Manage your teaching</span>
-            </div>
-            
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <!-- Left Column - Main Content -->
+            <div>
                 
-                <!-- View All Modules -->
-                <a href="{{ route('teacher.modules.index') }}" 
-                   class="group bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-xl text-white hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-xl transform hover:-translate-y-1">
-                    <div class="flex flex-col items-center text-center space-y-3">
-                        <div class="bg-white/20 rounded-full p-3">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                            </svg>
-                        </div>
-                        <span class="font-semibold text-base">My Modules</span>
-                    </div>
-                </a>
-
-                <!-- Grade Students -->
-                <a href="{{ route('teacher.grading.index') }}" 
-                   class="group bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-md hover:shadow-xl transform hover:-translate-y-1">
-                    <div class="flex flex-col items-center text-center space-y-3">
-                        <div class="bg-white/20 rounded-full p-3">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                            </svg>
-                        </div>
-                        <span class="font-semibold text-base">Grade Students</span>
-                    </div>
-                </a>
-
-                <!-- View Dashboard -->
-                <a href="{{ route('teacher.dashboard') }}" 
-                   class="group bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-xl text-white hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-md hover:shadow-xl transform hover:-translate-y-1">
-                    <div class="flex flex-col items-center text-center space-y-3">
-                        <div class="bg-white/20 rounded-full p-3">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
-                        </div>
-                        <span class="font-semibold text-base">Dashboard</span>
-                    </div>
-                </a>
-
-            </div>
-        </div>
-
-        <!-- My Modules Section -->
-        @if($modules->count() > 0)
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl p-6 mb-8">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-semibold text-gray-900">My Teaching Modules</h3>
-                    <a href="{{ route('teacher.modules.index') }}" class="text-sm text-purple-600 hover:text-purple-800">View all →</a>
+                <!-- Welcome Section -->
+                <div style="margin-bottom: 2rem;">
+                    <h1 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 2.7rem; font-weight: 500; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.2;">
+                        Welcome back, Teacher 👋
+                    </h1>
+                    <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1rem; color: #6b7280; margin: 0; font-weight: 500;">
+                        Here's an overview of your teaching activities
+                    </p>
                 </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach($modules->take(6) as $module)
-                        <a href="{{ route('teacher.modules.show', $module) }}" 
-                           class="group block bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border border-gray-200 hover:border-purple-300 hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1">
-                            
-                            <div class="flex items-center gap-4 mb-4">
-                                <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg p-3 group-hover:from-purple-600 group-hover:to-purple-700 transition-all">
-                                    <span class="text-white font-bold text-lg">{{ substr($module->code, 0, 2) }}</span>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h4 class="font-semibold text-gray-900 truncate group-hover:text-purple-600 transition-colors">
-                                        {{ $module->name }}
-                                    </h4>
-                                    <p class="text-sm text-gray-600">{{ $module->code }}</p>
-                                </div>
+
+                <!-- Stats Cards -->
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-bottom: 2rem;">
+                    
+                    <!-- Assigned Modules -->
+                    <div style="background: #d8b4fe; border-radius: 24px; padding: 2rem; transition: all 0.3s; position: relative;"
+                         onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(216, 180, 254, 0.25)'"
+                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        <div style="position: absolute; top: 1.25rem; right: 1.25rem;">
+                            <div style="background: white; padding: 0.5rem 0.875rem; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                <span style="font-size: 1.25rem; color: #581c87; font-weight: 700; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ $stats['total_modules'] ?? 0 }}</span>
                             </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.875rem; margin-bottom: 1.25rem;">
+                            <div style="background: #e9d5ff; border-radius: 14px; padding: 0.75rem; display: inline-flex;">
+                                <svg style="width: 28px; height: 28px; color: #581c87;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                </svg>
+                            </div>
+                            <span style="font-size: 0.75rem; font-weight: 700; color: #581c87; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; text-transform: uppercase; letter-spacing: 0.05em;">MODULES</span>
+                        </div>
+                        <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.3;">
+                            Assigned Modules
+                        </h4>
+                        <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; color: #6b21a8; margin: 0; font-weight: 500;">
+                            Your teaching modules
+                        </p>
+                    </div>
 
-                            <div class="grid grid-cols-3 gap-4 pt-4 border-t border-gray-200">
-                                <div class="text-center">
-                                    <p class="text-xs text-gray-600 mb-1">Active</p>
-                                    <p class="text-xl font-bold text-orange-600">{{ $module->pending_count ?? 0 }}</p>
+                    <!-- Total Students -->
+                    <div style="background: #93c5fd; border-radius: 24px; padding: 2rem; transition: all 0.3s; position: relative;"
+                         onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(147, 197, 253, 0.25)'"
+                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        <div style="position: absolute; top: 1.25rem; right: 1.25rem;">
+                            <div style="background: white; padding: 0.5rem 0.875rem; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                <span style="font-size: 1.25rem; color: #1e3a8a; font-weight: 700; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ $stats['total_students'] ?? 0 }}</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.875rem; margin-bottom: 1.25rem;">
+                            <div style="background: #bfdbfe; border-radius: 14px; padding: 0.75rem; display: inline-flex;">
+                                <svg style="width: 28px; height: 28px; color: #1e3a8a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                </svg>
+                            </div>
+                            <span style="font-size: 0.75rem; font-weight: 700; color: #1e3a8a; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; text-transform: uppercase; letter-spacing: 0.05em;">STUDENTS</span>
+                        </div>
+                        <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.3;">
+                            Total Students
+                        </h4>
+                        <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; color: #1e40af; margin: 0; font-weight: 500;">
+                            Active across all modules
+                        </p>
+                    </div>
+
+                    <!-- Pending Evaluations -->
+                    <div style="background: #fde68a; border-radius: 24px; padding: 2rem; transition: all 0.3s; position: relative;"
+                         onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(253, 224, 71, 0.25)'"
+                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        <div style="position: absolute; top: 1.25rem; right: 1.25rem;">
+                            <div style="background: white; padding: 0.5rem 0.875rem; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                <span style="font-size: 1.25rem; color: #713f12; font-weight: 700; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ $stats['pending_evaluations'] ?? 0 }}</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.875rem; margin-bottom: 1.25rem;">
+                            <div style="background: #fef3c7; border-radius: 14px; padding: 0.75rem; display: inline-flex;">
+                                <svg style="width: 28px; height: 28px; color: #713f12;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <span style="font-size: 0.75rem; font-weight: 700; color: #713f12; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; text-transform: uppercase; letter-spacing: 0.05em;">PENDING</span>
+                        </div>
+                        <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.3;">
+                            Pending Evaluations
+                        </h4>
+                        <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; color: #78350f; margin: 0; font-weight: 500;">
+                            Need grading
+                        </p>
+                    </div>
+
+                    <!-- Completed Evaluations -->
+                    <div style="background: #86efac; border-radius: 24px; padding: 2rem; transition: all 0.3s; position: relative;"
+                         onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(134, 239, 172, 0.25)'"
+                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        <div style="position: absolute; top: 1.25rem; right: 1.25rem;">
+                            <div style="background: white; padding: 0.5rem 0.875rem; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                <span style="font-size: 1.25rem; color: #064e3b; font-weight: 700; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ $stats['completed_evaluations'] ?? 0 }}</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.875rem; margin-bottom: 1.25rem;">
+                            <div style="background: #bbf7d0; border-radius: 14px; padding: 0.75rem; display: inline-flex;">
+                                <svg style="width: 28px; height: 28px; color: #064e3b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <span style="font-size: 0.75rem; font-weight: 700; color: #064e3b; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; text-transform: uppercase; letter-spacing: 0.05em;">COMPLETED</span>
+                        </div>
+                        <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.5rem 0; line-height: 1.3;">
+                            Completed Evaluation
+                        </h4>
+                        <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.875rem; color: #047857; margin: 0; font-weight: 500;">
+                            Successfully graded
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- Quick Actions Section -->
+                <div style="background: white; border-radius: 24px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04); border: 1px solid #f3f4f6;">
+                    <h3 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.125rem; font-weight: 600; color: #1a1a1a; margin: 0 0 1.5rem 0;">
+                        Quick Actions
+                    </h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                        
+                        <!-- View All Modules -->
+                        <a href="{{ route('teacher.modules.index') }}" style="text-decoration: none;">
+                            <div style="background: #d8b4fe; border-radius: 18px; padding: 1.5rem; transition: all 0.3s; cursor: pointer; text-align: center;"
+                                 onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 16px rgba(216, 180, 254, 0.2)'"
+                                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                <div style="background: #e9d5ff; border-radius: 12px; padding: 0.75rem; display: inline-flex; margin-bottom: 0.75rem;">
+                                    <svg style="width: 28px; height: 28px; color: #581c87;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    </svg>
                                 </div>
-                                <div class="text-center">
-                                    <p class="text-xs text-gray-600 mb-1">Done</p>
-                                    <p class="text-xl font-bold text-green-600">{{ $module->completed_count ?? 0 }}</p>
-                                </div>
-                                <div class="text-center">
-                                    <p class="text-xs text-gray-600 mb-1">Total</p>
-                                    <p class="text-xl font-bold text-blue-600">{{ ($module->pending_count ?? 0) + ($module->completed_count ?? 0) }}</p>
-                                </div>
+                                <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.9375rem; font-weight: 600; color: #1a1a1a; margin: 0;">
+                                    My Modules
+                                </h4>
                             </div>
                         </a>
-                    @endforeach
-                </div>
-            </div>
-        @else
-            <!-- Empty State -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl p-6">
-                <div class="flex items-center justify-center py-8">
-                    <div class="text-center">
-                        <div class="bg-purple-100 rounded-full p-6 inline-block mb-4">
-                            <svg class="h-12 w-12 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                            </svg>
-                        </div>
-                        <p class="text-xl font-semibold text-gray-900 mb-2">No Modules Assigned Yet</p>
-                        <p class="text-sm text-gray-600">Contact your administrator to get modules assigned to you.</p>
-                    </div>
-                </div>
-            </div>
-        @endif
 
-        <!-- Performance Overview -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            
-            <!-- Statistics Overview -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Teaching Overview</h3>
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                        <span class="text-sm font-medium text-gray-700">Assigned Modules</span>
-                        <span class="text-lg font-bold text-purple-600">{{ $stats['total_modules'] ?? 0 }}</span>
-                    </div>
-                    <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                        <span class="text-sm font-medium text-gray-700">Total Students</span>
-                        <span class="text-lg font-bold text-blue-600">{{ $stats['total_students'] ?? 0 }}</span>
-                    </div>
-                    <div class="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
-                        <span class="text-sm font-medium text-gray-700">Pending Evaluations</span>
-                        <span class="text-lg font-bold text-orange-600">{{ $stats['pending_evaluations'] ?? 0 }}</span>
-                    </div>
-                    <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                        <span class="text-sm font-medium text-gray-700">Completed</span>
-                        <span class="text-lg font-bold text-green-600">{{ $stats['completed_evaluations'] ?? 0 }}</span>
+                        <!-- Grade Students -->
+                        <a href="{{ route('teacher.grading.index') }}" style="text-decoration: none;">
+                            <div style="background: #93c5fd; border-radius: 18px; padding: 1.5rem; transition: all 0.3s; cursor: pointer; text-align: center;"
+                                 onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 16px rgba(147, 197, 253, 0.2)'"
+                                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                <div style="background: #bfdbfe; border-radius: 12px; padding: 0.75rem; display: inline-flex; margin-bottom: 0.75rem;">
+                                    <svg style="width: 28px; height: 28px; color: #1e3a8a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                                    </svg>
+                                </div>
+                                <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.9375rem; font-weight: 600; color: #1a1a1a; margin: 0;">
+                                    Grade Students
+                                </h4>
+                            </div>
+                        </a>
+
+                        <!-- View Dashboard -->
+                        <a href="{{ route('teacher.dashboard') }}" style="text-decoration: none;">
+                            <div style="background: #86efac; border-radius: 18px; padding: 1.5rem; transition: all 0.3s; cursor: pointer; text-align: center;"
+                                 onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 16px rgba(134, 239, 172, 0.2)'"
+                                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                <div style="background: #bbf7d0; border-radius: 12px; padding: 0.75rem; display: inline-flex; margin-bottom: 0.75rem;">
+                                    <svg style="width: 28px; height: 28px; color: #064e3b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                </div>
+                                <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.9375rem; font-weight: 600; color: #1a1a1a; margin: 0;">
+                                    Dashboard
+                                </h4>
+                            </div>
+                        </a>
+
                     </div>
                 </div>
+
+                <!-- My Modules Section -->
+                @if($modules->count() > 0)
+                    <div style="background: white; border-radius: 24px; padding: 2rem; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04); border: 1px solid #f3f4f6;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+                            <h3 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.125rem; font-weight: 600; color: #1a1a1a; margin: 0;">
+                                My Teaching Modules
+                            </h3>
+                            <a href="{{ route('teacher.modules.index') }}" style="font-size: 0.8125rem; color: #6b7280; text-decoration: none; font-weight: 600; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; transition: color 0.2s;"
+                               onmouseover="this.style.color='#1a1a1a'"
+                               onmouseout="this.style.color='#6b7280'">View all →</a>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem;">
+                            @foreach($modules->take(4) as $module)
+                                <a href="{{ route('teacher.modules.show', $module) }}" style="text-decoration: none;">
+                                    <div style="background: #fafafa; border-radius: 18px; padding: 1.5rem; transition: all 0.3s; border: 1px solid #f3f4f6;"
+                                         onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 16px rgba(0, 0, 0, 0.06)'; this.style.borderColor='#d8b4fe'"
+                                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='#f3f4f6'">
+                                        
+                                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
+                                            <div style="background: #d8b4fe; border-radius: 12px; padding: 0.75rem; flex-shrink: 0;">
+                                                <span style="color: #581c87; font-weight: 700; font-size: 1rem; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ substr($module->code, 0, 2) }}</span>
+                                            </div>
+                                            <div style="flex: 1; min-width: 0;">
+                                                <h4 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.9375rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.25rem 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                    {{ $module->name }}
+                                                </h4>
+                                                <p style="font-size: 0.75rem; color: #6b7280; margin: 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 500;">{{ $module->code }}</p>
+                                            </div>
+                                        </div>
+
+                                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+                                            <div style="text-align: center;">
+                                                <p style="font-size: 0.6875rem; color: #6b7280; margin: 0 0 0.375rem 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 600; text-transform: uppercase;">Active</p>
+                                                <p style="font-size: 1.25rem; font-weight: 700; color: #ea580c; margin: 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ $module->pending_count ?? 0 }}</p>
+                                            </div>
+                                            <div style="text-align: center;">
+                                                <p style="font-size: 0.6875rem; color: #6b7280; margin: 0 0 0.375rem 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 600; text-transform: uppercase;">Done</p>
+                                                <p style="font-size: 1.25rem; font-weight: 700; color: #10b981; margin: 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ $module->completed_count ?? 0 }}</p>
+                                            </div>
+                                            <div style="text-align: center;">
+                                                <p style="font-size: 0.6875rem; color: #6b7280; margin: 0 0 0.375rem 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 600; text-transform: uppercase;">Total</p>
+                                                <p style="font-size: 1.25rem; font-weight: 700; color: #3b82f6; margin: 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ ($module->pending_count ?? 0) + ($module->completed_count ?? 0) }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                @else
+                    <!-- Empty State -->
+                    <div style="background: white; border-radius: 24px; padding: 2rem; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04); border: 1px solid #f3f4f6;">
+                        <div style="text-align: center; padding: 3rem 2rem;">
+                            <div style="width: 100px; height: 100px; background: #e9d5ff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;">
+                                <svg style="width: 48px; height: 48px; color: #a855f7;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                </svg>
+                            </div>
+                            <h3 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.5rem 0;">No Modules Assigned Yet</h3>
+                            <p style="font-size: 0.9375rem; color: #6b7280; margin: 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 500;">Contact your administrator to get modules assigned to you.</p>
+                        </div>
+                    </div>
+                @endif
+
             </div>
 
-            <!-- Recent Activity / Tips -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Tips</h3>
-                <div class="space-y-4">
-                    <div class="flex gap-3 p-3 bg-gray-50 rounded-lg">
-                        <div class="bg-purple-100 rounded-full p-2 h-fit">
-                            <svg class="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
+            <!-- Right Column - Sidebar -->
+            <div>
+                
+                <!-- Profile Card -->
+                <div style="background: white; border-radius: 24px; padding: 2rem; margin-bottom: 1.5rem; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04); border: 1px solid #f3f4f6;">
+                    <div style="text-align: center;">
+                        <div style="width: 80px; height: 80px; border-radius: 50%; background: #d8b4fe; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(216, 180, 254, 0.3);">
+                            <span style="font-size: 2rem; color: #1a1a1a; font-weight: 700; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ substr(auth('teacher')->user()->name, 0, 1) }}</span>
                         </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-900">Grade Students</p>
-                            <p class="text-xs text-gray-600 mt-1">Click on any module to view and grade students</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex gap-3 p-3 bg-gray-50 rounded-lg">
-                        <div class="bg-blue-100 rounded-full p-2 h-fit">
-                            <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-900">Evaluation Status</p>
-                            <p class="text-xs text-gray-600 mt-1">Mark students as PASS or FAIL after evaluation</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex gap-3 p-3 bg-gray-50 rounded-lg">
-                        <div class="bg-green-100 rounded-full p-2 h-fit">
-                            <svg class="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-900">Track Progress</p>
-                            <p class="text-xs text-gray-600 mt-1">Monitor completed evaluations with timestamps</p>
+                        <h3 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.125rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.25rem 0;">
+                            {{ auth('teacher')->user()->name }}
+                        </h3>
+                        <p style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 0.8125rem; color: #6b7280; margin: 0 0 1.25rem 0; font-weight: 500;">
+                            Teacher
+                        </p>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #f3f4f6;">
+                            <div style="text-align: center;">
+                                <p style="font-size: 1.5rem; font-weight: 700; color: #1a1a1a; margin: 0 0 0.125rem 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ $stats['total_modules'] ?? 0 }}</p>
+                                <p style="font-size: 0.75rem; color: #6b7280; margin: 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 600;">Modules</p>
+                            </div>
+                            <div style="width: 1px; height: 32px; background: #e5e7eb;"></div>
+                            <div style="text-align: center;">
+                                <p style="font-size: 1.5rem; font-weight: 700; color: #1a1a1a; margin: 0 0 0.125rem 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">{{ $stats['total_students'] ?? 0 }}</p>
+                                <p style="font-size: 0.75rem; color: #6b7280; margin: 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 600;">Students</p>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Quick Tips -->
+                <div style="background: white; border-radius: 24px; padding: 2rem; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04); border: 1px solid #f3f4f6;">
+                    <h3 style="font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-size: 1.125rem; font-weight: 600; color: #1a1a1a; margin: 0 0 1.5rem 0;">
+                        Quick Tips
+                    </h3>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="display: flex; gap: 1rem; padding: 1rem; background: #fafafa; border-radius: 14px;">
+                            <div style="background: #e9d5ff; border-radius: 10px; padding: 0.625rem; flex-shrink: 0; height: fit-content;">
+                                <svg style="width: 20px; height: 20px; color: #a855f7;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p style="font-size: 0.875rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.25rem 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">Grade Students</p>
+                                <p style="font-size: 0.75rem; color: #6b7280; margin: 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 500;">Click on any module to view and grade students</p>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem; padding: 1rem; background: #fafafa; border-radius: 14px;">
+                            <div style="background: #bfdbfe; border-radius: 10px; padding: 0.625rem; flex-shrink: 0; height: fit-content;">
+                                <svg style="width: 20px; height: 20px; color: #3b82f6;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p style="font-size: 0.875rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.25rem 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">Evaluation Status</p>
+                                <p style="font-size: 0.75rem; color: #6b7280; margin: 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 500;">Mark students as PASS or FAIL after evaluation</p>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem; padding: 1rem; background: #fafafa; border-radius: 14px;">
+                            <div style="background: #bbf7d0; border-radius: 10px; padding: 0.625rem; flex-shrink: 0; height: fit-content;">
+                                <svg style="width: 20px; height: 20px; color: #10b981;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p style="font-size: 0.875rem; font-weight: 600; color: #1a1a1a; margin: 0 0 0.25rem 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;">Track Progress</p>
+                                <p style="font-size: 0.75rem; color: #6b7280; margin: 0; font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif; font-weight: 500;">Monitor completed evaluations with timestamps</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
         </div>
