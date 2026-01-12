@@ -147,18 +147,17 @@ class UserManagementController extends Controller
                     ->with('error', 'User not found!');
             }
 
-            // Create user in new role table
-            $newUser = $this->createUserInNewRole($validated['new_role'], [
-                'name' => $user->name,
-                'email' => $user->email,
-                'password' => $user->password, // Keep same password
-            ]);
-
-            // Handle role-specific data transfer
-            $this->handleRoleTransition($user, $newUser, $validated['current_role'], $validated['new_role']);
-
-            // Delete from old role table
-            $user->delete();
+            // Handle special cases: student ↔ old_student
+            if ($validated['current_role'] === 'student' && $validated['new_role'] === 'old_student') {
+                $this->convertStudentToOldStudent($user);
+            } 
+            elseif ($validated['current_role'] === 'old_student' && $validated['new_role'] === 'student') {
+                $this->convertOldStudentToStudent($user);
+            }
+            else {
+                // General role change
+                $this->changeGeneralRole($user, $validated['current_role'], $validated['new_role']);
+            }
 
             DB::commit();
 
@@ -173,6 +172,95 @@ class UserManagementController extends Controller
                 ->back()
                 ->with('error', 'Failed to change user role: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Convert Student to Old Student
+     */
+    private function convertStudentToOldStudent(Student $student)
+    {
+        // Create old student record first
+        $oldStudent = OldStudent::create([
+            'name' => $student->name,
+            'email' => $student->email,
+            'password' => $student->password,
+        ]);
+
+        // Get all enrollments for this student
+        $enrollments = Enrollment::where('student_id', $student->id)->get();
+
+        foreach ($enrollments as $enrollment) {
+            // Check if old_student already has an enrollment with same module and status
+            $existingEnrollment = Enrollment::where('student_id', $oldStudent->id)
+                ->where('module_id', $enrollment->module_id)
+                ->where('status', $enrollment->status)
+                ->first();
+
+            if ($existingEnrollment) {
+                // Duplicate exists - delete the student's enrollment
+                $enrollment->delete();
+            } else {
+                // No duplicate - transfer this enrollment to old_student
+                $enrollment->update(['student_id' => $oldStudent->id]);
+            }
+        }
+
+        // Delete the student record
+        $student->delete();
+    }
+
+    /**
+     * Convert Old Student to Student
+     */
+    private function convertOldStudentToStudent(OldStudent $oldStudent)
+    {
+        // Create student record first
+        $student = Student::create([
+            'name' => $oldStudent->name,
+            'email' => $oldStudent->email,
+            'password' => $oldStudent->password,
+        ]);
+
+        // Get all enrollments for this old student
+        $enrollments = Enrollment::where('student_id', $oldStudent->id)->get();
+
+        foreach ($enrollments as $enrollment) {
+            // Check if student already has an enrollment with same module and status
+            $existingEnrollment = Enrollment::where('student_id', $student->id)
+                ->where('module_id', $enrollment->module_id)
+                ->where('status', $enrollment->status)
+                ->first();
+
+            if ($existingEnrollment) {
+                // Duplicate exists - delete the old_student's enrollment
+                $enrollment->delete();
+            } else {
+                // No duplicate - transfer this enrollment to student
+                $enrollment->update(['student_id' => $student->id]);
+            }
+        }
+
+        // Delete the old student record
+        $oldStudent->delete();
+    }
+
+    /**
+     * General role change (not student ↔ old_student)
+     */
+    private function changeGeneralRole($user, string $currentRole, string $newRole)
+    {
+        // Create user in new role table
+        $newUser = $this->createUserInNewRole($newRole, [
+            'name' => $user->name,
+            'email' => $user->email,
+            'password' => $user->password,
+        ]);
+
+        // Handle role-specific data transfer
+        $this->handleRoleTransition($user, $newUser, $currentRole, $newRole);
+
+        // Delete from old role table
+        $user->delete();
     }
 
     // Helper: Get user by role
@@ -199,26 +287,35 @@ class UserManagementController extends Controller
         };
     }
 
-    // Helper: Handle data transfer between roles
+    // Helper: Handle data transfer between roles (for general role changes)
     private function handleRoleTransition($oldUser, $newUser, string $oldRole, string $newRole)
     {
-        // If changing from student to old_student or vice versa, update enrollments
-        if (($oldRole === 'student' && $newRole === 'old_student') || 
-            ($oldRole === 'old_student' && $newRole === 'student')) {
-            
-            // Update enrollment user_id references
+        // If changing FROM student/old_student to non-student role
+        if (in_array($oldRole, ['student', 'old_student']) && !in_array($newRole, ['student', 'old_student'])) {
+            // Complete all active enrollments first
             Enrollment::where('student_id', $oldUser->id)
-                ->update(['student_id' => $newUser->id]);
+                ->where('status', 'active')
+                ->update([
+                    'status' => 'completed',
+                    'completed_at' => now(),
+                    'pass_status' => 'PASS',
+                ]);
+            
+            // Then delete all enrollments (they're becoming teacher/admin)
+            Enrollment::where('student_id', $oldUser->id)->delete();
         }
 
+        // If changing TO student/old_student from non-student role
+        // (No enrollments to transfer since they didn't have any as teacher/admin)
+
         // If changing from teacher, remove module assignments
-        if ($oldRole === 'teacher') {
+        if ($oldRole === 'teacher' && $newRole !== 'teacher') {
             DB::table('module_teachers')
                 ->where('teacher_id', $oldUser->id)
                 ->delete();
         }
 
-        // If changing to teacher and from teacher, transfer module assignments
+        // If both are teachers, transfer module assignments
         if ($oldRole === 'teacher' && $newRole === 'teacher') {
             DB::table('module_teachers')
                 ->where('teacher_id', $oldUser->id)
