@@ -122,11 +122,11 @@
                             </a>
 
                             <!-- Logout Form -->
-                            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                            <form method="POST" action="{{ route('logout') }}" style="margin: 0;" onsubmit="markLogout()">
                                 @csrf
                                 <button type="submit"
                                     style="display: flex; align-items: center; width: 100%; text-align: left; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #ef4444; background: none; border: none; cursor: pointer; border-radius: 0.375rem; transition: background-color 0.15s;"
-                                    onsubmit="markLogout()"
+                                    
                                     onmouseover="this.style.backgroundColor='#fef2f2'"
                                     onmouseout="this.style.backgroundColor='transparent'">
                                     <svg style="width: 16px; height: 16px; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -381,6 +381,34 @@
     let calendar;
     let accessToken = null;
 
+    // Pastel color palette for events
+    const pastelColors = [
+        '#fca5a5', '#d8b4fe', '#86efac', '#fcd34d', 
+        '#93c5fd', '#fda4af', '#a7f3d0', '#fde68a'
+    ];
+
+    // ✅ FIX 1: Clear calendar storage on page load if user logged out
+    window.addEventListener('load', () => {
+        // Check if this is a fresh login (no user session before)
+        const wasLoggedOut = sessionStorage.getItem('wasLoggedOut');
+        if (wasLoggedOut) {
+            // User just logged in after logout - clear old calendar token
+            localStorage.removeItem('google_access_token');
+            sessionStorage.removeItem('wasLoggedOut');
+        }
+        
+        // Initialize Google APIs
+        if (typeof gapi !== 'undefined') gapiLoaded();
+        if (typeof google !== 'undefined') gisLoaded();
+    });
+
+    // ✅ FIX 2: Mark logout in sessionStorage
+    // Add this to your logout form (call before logout)
+    function markLogout() {
+        sessionStorage.setItem('wasLoggedOut', 'true');
+        localStorage.removeItem('google_access_token');
+    }
+
     // Initialize Google API
     function gapiLoaded() {
         gapi.load('client', initializeGapiClient);
@@ -407,54 +435,92 @@
 
     function maybeEnableButtons() {
         if (gapiInited && gisInited) {
+            // ✅ FIX 3: Validate stored token before using it
             const storedToken = localStorage.getItem('google_access_token');
             if (storedToken) {
-                accessToken = storedToken;
-                updateSignInStatus(true);
+                // Validate token is still valid
+                validateAndUseToken(storedToken);
             } else {
+                updateSignInStatus(false);
                 renderSignInButton();
             }
         }
     }
 
-    function renderSignInButton() {
-        google.accounts.id.initialize({
-            client_id: CLIENT_ID,
-            callback: handleCredentialResponse
-        });
+    // ✅ FIX 4: Validate token before using
+    async function validateAndUseToken(token) {
+        try {
+            // Set token temporarily
+            gapi.client.setToken({ access_token: token });
+            
+            // Try to fetch calendar list to validate token
+            const response = await gapi.client.calendar.calendarList.list({
+                maxResults: 1
+            });
+            
+            // Token is valid
+            accessToken = token;
+            updateSignInStatus(true);
+        } catch (error) {
+            console.log('Stored token invalid:', error);
+            // Token invalid - clear it and show sign in
+            localStorage.removeItem('google_access_token');
+            gapi.client.setToken(null);
+            accessToken = null;
+            updateSignInStatus(false);
+            renderSignInButton();
+        }
+    }
 
-        google.accounts.id.renderButton(
-            document.getElementById('googleSignInButton'), {
-                theme: 'filled_blue',
-                size: 'large',
-                text: 'signin_with',
-                shape: 'rectangular',
-                logo_alignment: 'left',
-                width: 280
-            }
-        );
+    function renderSignInButton() {
+        // ✅ FIX 5: Clear button container first
+        const buttonContainer = document.getElementById('googleSignInButton');
+        if (!buttonContainer) return;
+        
+        buttonContainer.innerHTML = ''; // Clear existing content
+        
+        // Small delay to ensure container is ready
+        setTimeout(() => {
+            google.accounts.id.initialize({
+                client_id: CLIENT_ID,
+                callback: handleCredentialResponse
+            });
+
+            google.accounts.id.renderButton(
+                buttonContainer,
+                {
+                    theme: 'filled_blue',
+                    size: 'large',
+                    text: 'signin_with',
+                    shape: 'pill',
+                    logo_alignment: 'left'
+                }
+            );
+        }, 100);
     }
 
     function handleCredentialResponse(response) {
         tokenClient.callback = async (resp) => {
             if (resp.error !== undefined) {
-                throw (resp);
+                console.error('OAuth error:', resp.error);
+                showToast('Failed to connect to Google Calendar', 'error');
+                return;
             }
             accessToken = resp.access_token;
             localStorage.setItem('google_access_token', accessToken);
+            
+            // ✅ FIX 6: Set token in gapi client
+            gapi.client.setToken({ access_token: accessToken });
+            
             updateSignInStatus(true);
             initializeCalendar();
             showToast('Connected to Google Calendar!', 'success');
         };
 
         if (gapi.client.getToken() === null) {
-            tokenClient.requestAccessToken({
-                prompt: 'consent'
-            });
+            tokenClient.requestAccessToken({ prompt: 'consent' });
         } else {
-            tokenClient.requestAccessToken({
-                prompt: ''
-            });
+            tokenClient.requestAccessToken({ prompt: '' });
         }
     }
 
@@ -463,11 +529,26 @@
             const token = gapi.client.getToken();
             if (token !== null) {
                 google.accounts.oauth2.revoke(token.access_token);
-                gapi.client.setToken('');
+                gapi.client.setToken(null);
             }
+            
+            // ✅ FIX 7: Complete cleanup
             accessToken = null;
             localStorage.removeItem('google_access_token');
+            
+            // Destroy calendar instance
+            if (calendar) {
+                calendar.destroy();
+                calendar = null;
+            }
+            
             updateSignInStatus(false);
+            
+            // ✅ FIX 8: Force re-render sign-in button
+            setTimeout(() => {
+                renderSignInButton();
+            }, 300);
+            
             showToast('Disconnected from Google Calendar', 'success');
         }
     }
@@ -486,7 +567,11 @@
             `;
             statusElement.style.backgroundColor = '#d1fae5';
             statusElement.style.color = '#065f46';
-            initializeCalendar();
+            
+            // ✅ FIX 9: Only initialize calendar if not already initialized
+            if (!calendar) {
+                initializeCalendar();
+            }
         } else {
             signInSection.style.display = 'block';
             calendarSection.style.display = 'none';
@@ -496,6 +581,7 @@
             `;
             statusElement.style.backgroundColor = '#fef3c7';
             statusElement.style.color = '#92400e';
+            
             if (calendar) {
                 calendar.destroy();
                 calendar = null;
@@ -507,7 +593,13 @@
         if (!accessToken) return;
 
         const calendarEl = document.getElementById('calendar');
-
+        if (!calendarEl) return;
+        
+        // ✅ FIX 10: Destroy existing calendar before creating new one
+        if (calendar) {
+            calendar.destroy();
+        }
+        
         calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             headerToolbar: {
@@ -543,7 +635,7 @@
                 await updateGoogleEvent(info.event);
             }
         });
-
+        
         calendar.render();
     }
 
@@ -558,34 +650,19 @@
         });
 
         const events = response.result.items;
-        return events.map(event => ({
+        return events.map((event, index) => ({
             id: event.id,
             title: event.summary,
             start: event.start.dateTime || event.start.date,
             end: event.end.dateTime || event.end.date,
             description: event.description || '',
-            backgroundColor: getColorFromColorId(event.colorId),
+            backgroundColor: pastelColors[index % pastelColors.length],
+            borderColor: pastelColors[index % pastelColors.length],
+            textColor: '#1a1a1a',
             extendedProps: {
                 description: event.description || ''
             }
         }));
-    }
-
-    function getColorFromColorId(colorId) {
-        const colors = {
-            '1': '#a4bdfc',
-            '2': '#7ae7bf',
-            '3': '#dbadff',
-            '4': '#ff887c',
-            '5': '#fbd75b',
-            '6': '#ffb878',
-            '7': '#46d6db',
-            '8': '#e1e1e1',
-            '9': '#5484ed',
-            '10': '#51b749',
-            '11': '#dc2127'
-        };
-        return colors[colorId] || '#10b981';
     }
 
     async function addGoogleEvent(eventData) {
@@ -647,14 +724,14 @@
         document.getElementById('eventForm').reset();
         document.getElementById('eventId').value = '';
         document.getElementById('deleteEventBtn').style.display = 'none';
-
+        
         if (dateStr) {
             const date = new Date(dateStr);
             document.getElementById('eventStart').value = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
             const endDate = new Date(date.getTime() + 3600000);
             document.getElementById('eventEnd').value = new Date(endDate.getTime() - endDate.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
         }
-
+        
         document.getElementById('eventFormModal').style.display = 'block';
     }
 
@@ -663,20 +740,20 @@
         document.getElementById('eventId').value = event.id;
         document.getElementById('eventTitle').value = event.title;
         document.getElementById('eventDescription').value = event.extendedProps.description || '';
-
+        
         const startDate = new Date(event.start);
         document.getElementById('eventStart').value = new Date(startDate.getTime() - startDate.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-
+        
         const endDate = event.end ? new Date(event.end) : new Date(event.start);
         document.getElementById('eventEnd').value = new Date(endDate.getTime() - endDate.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-
+        
         document.getElementById('deleteEventBtn').style.display = 'block';
         document.getElementById('eventFormModal').style.display = 'block';
     }
 
     async function saveEvent(e) {
         e.preventDefault();
-
+        
         const eventId = document.getElementById('eventId').value;
         const eventData = {
             title: document.getElementById('eventTitle').value,
@@ -684,7 +761,7 @@
             start: document.getElementById('eventStart').value,
             end: document.getElementById('eventEnd').value
         };
-
+        
         try {
             if (eventId) {
                 await updateGoogleEvent({
@@ -692,16 +769,14 @@
                     title: eventData.title,
                     start: new Date(eventData.start),
                     end: new Date(eventData.end),
-                    extendedProps: {
-                        description: eventData.description
-                    }
+                    extendedProps: { description: eventData.description }
                 });
                 showToast('Event updated!', 'success');
             } else {
                 await addGoogleEvent(eventData);
                 showToast('Event created!', 'success');
             }
-
+            
             calendar.refetchEvents();
             closeEventFormModal();
         } catch (error) {
@@ -711,9 +786,9 @@
     }
 
     async function deleteEvent() {
-        if (confirm('Delete this event from Google Calendar?')) {
+        if (confirm('Delete this event from Google Calendar?')) {f
             const eventId = document.getElementById('eventId').value;
-
+            
             try {
                 await deleteGoogleEvent(eventId);
                 calendar.refetchEvents();
@@ -737,6 +812,11 @@
     function openCalendarModal() {
         document.getElementById('calendarModal').style.display = 'block';
         document.body.style.overflow = 'hidden';
+        
+        // ✅ FIX 11: Re-check connection status when modal opens
+        if (!accessToken && gapiInited && gisInited) {
+            renderSignInButton();
+        }
     }
 
     function closeCalendarModal() {
@@ -746,11 +826,21 @@
 
     function showToast(message, type = 'success') {
         const toast = document.createElement('div');
+        const bgColor = type === 'success' ? '#d1fae5' : '#fee2e2';
+        const textColor = type === 'success' ? '#065f46' : '#991b1b';
+        const borderColor = type === 'success' ? '#10b981' : '#ef4444';
+        
         toast.style.cssText = `
-            position: fixed; top: 20px; right: 20px;
-            background-color: ${type === 'success' ? '#10b981' : '#ef4444'};
-            color: white; padding: 1rem 1.5rem; border-radius: 0.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); z-index: 10001;
+            position: fixed; top: 24px; right: 24px;
+            background-color: ${bgColor};
+            color: ${textColor};
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid ${borderColor};
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 10001;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
             animation: slideIn 0.3s ease-out;
         `;
         toast.textContent = message;
@@ -777,11 +867,5 @@
             if (document.getElementById('calendarModal').style.display === 'block') closeCalendarModal();
             if (document.getElementById('eventFormModal').style.display === 'block') closeEventFormModal();
         }
-    });
-
-    // Load Google APIs
-    window.addEventListener('load', () => {
-        if (typeof gapi !== 'undefined') gapiLoaded();
-        if (typeof google !== 'undefined') gisLoaded();
     });
 </script>

@@ -92,11 +92,11 @@
                                 Profile Settings
                             </a>
                             <div style="height: 1px; background-color: #e5e7eb; margin: 0.5rem 0;"></div>
-                            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                            <form method="POST" action="{{ route('logout') }}" style="margin: 0;" onsubmit="markLogout()">
                                 @csrf
                                 <button type="submit"
                                     style="display: flex; align-items: center; width: 100%; text-align: left; padding: 0.75rem 1rem; font-size: 0.875rem; font-weight: 500; color: #ef4444; background: none; border: none; cursor: pointer; border-radius: 10px; transition: all 0.2s; font-family: 'Inter', sans-serif;"
-                                    onsubmit="markLogout()"
+
                                     onmouseover="this.style.backgroundColor='#fef2f2'"
                                     onmouseout="this.style.backgroundColor='transparent'">
                                     <svg style="width: 18px; height: 18px; margin-right: 0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
