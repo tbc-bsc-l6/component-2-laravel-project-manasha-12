@@ -21,18 +21,24 @@ class GradingController extends Controller
         // Get teacher's modules with enrollment counts
         $modules = $teacher->modules()
             ->withCount([
-                'enrollments as total_students',
+                'enrollments as total_students' => function ($query) {
+                    $query->whereHas('student'); // ✅ Only count enrollments with students
+                },
                 'enrollments as pending_students' => function ($query) {
-                    $query->where('status', 'active');
+                    $query->where('status', 'active')->whereHas('student');
                 },
                 'enrollments as completed_students' => function ($query) {
-                    $query->where('status', 'completed');
+                    $query->where('status', 'completed')->whereHas('student');
                 },
                 'enrollments as passed_students' => function ($query) {
-                    $query->where('status', 'completed')->where('pass_status', 'PASS');
+                    $query->where('status', 'completed')
+                          ->whereHas('student')
+                          ->whereRaw('UPPER(TRIM(pass_status)) = ?', ['PASS']);
                 },
                 'enrollments as failed_students' => function ($query) {
-                    $query->where('status', 'completed')->where('pass_status', 'FAIL');
+                    $query->where('status', 'completed')
+                          ->whereHas('student')
+                          ->whereRaw('UPPER(TRIM(pass_status)) = ?', ['FAIL']);
                 }
             ])
             ->get();
@@ -60,28 +66,39 @@ class GradingController extends Controller
             abort(403, 'You are not assigned to this module.');
         }
 
-        // Get students grouped by status
+        // ✅ FIX: Get students grouped by status, filtering out null students
         $pendingStudents = $module->enrollments()
             ->where('status', 'active')
             ->with('student')
+            ->whereHas('student') // ✅ Only get enrollments that have students
             ->orderBy('enrolled_at', 'desc')
             ->get();
 
         $completedStudents = $module->enrollments()
             ->where('status', 'completed')
             ->with('student')
+            ->whereHas('student') // ✅ Only get enrollments that have students
             ->orderBy('completed_at', 'desc')
             ->get();
 
+        // ✅ FIX: Use filter with case-insensitive comparison for pass_status
+        $passedCount = $completedStudents->filter(function($enrollment) {
+            return strtoupper(trim($enrollment->pass_status ?? '')) === 'PASS';
+        })->count();
+
+        $failedCount = $completedStudents->filter(function($enrollment) {
+            return strtoupper(trim($enrollment->pass_status ?? '')) === 'FAIL';
+        })->count();
+
         // Statistics for this module
         $stats = [
-            'total' => $module->enrollments()->count(),
+            'total' => $module->enrollments()->whereHas('student')->count(),
             'pending' => $pendingStudents->count(),
             'completed' => $completedStudents->count(),
-            'passed' => $completedStudents->where('pass_status', 'pass')->count(),
-            'failed' => $completedStudents->where('pass_status', 'fail')->count(),
+            'passed' => $passedCount,
+            'failed' => $failedCount,
             'pass_rate' => $completedStudents->count() > 0 
-                ? round(($completedStudents->where('pass_status', 'pass')->count() / $completedStudents->count()) * 100, 1)
+                ? round(($passedCount / $completedStudents->count()) * 100, 1)
                 : 0,
         ];
 
@@ -98,6 +115,11 @@ class GradingController extends Controller
         // Verify teacher is assigned to this module
         if (!$teacher->teachesModule($enrollment->module)) {
             abort(403, 'You are not assigned to this module.');
+        }
+
+        // ✅ FIX: Check if student exists
+        if (!$enrollment->student) {
+            return back()->with('error', 'Student not found. They may have been removed from the system.');
         }
 
         // Verify enrollment is active
@@ -149,12 +171,19 @@ class GradingController extends Controller
         ]);
 
         $graded = 0;
+        $skipped = 0;
 
         foreach ($request->grades as $gradeData) {
-            $enrollment = Enrollment::find($gradeData['enrollment_id']);
+            $enrollment = Enrollment::with('student')->find($gradeData['enrollment_id']);
 
             // Verify enrollment exists and belongs to this module
             if (!$enrollment || $enrollment->module_id !== $module->id) {
+                continue;
+            }
+
+            // ✅ FIX: Skip if student is null
+            if (!$enrollment->student) {
+                $skipped++;
                 continue;
             }
 
@@ -173,9 +202,13 @@ class GradingController extends Controller
         }
 
         if ($graded > 0) {
-            return back()->with('success', "Successfully graded {$graded} student(s).");
+            $message = "Successfully graded {$graded} student(s).";
+            if ($skipped > 0) {
+                $message .= " {$skipped} enrollment(s) skipped (students removed).";
+            }
+            return back()->with('success', $message);
         }
 
-        return back()->with('error', 'No students were graded. They may have already been evaluated.');
+        return back()->with('error', 'No students were graded. They may have already been evaluated or removed.');
     }
 }

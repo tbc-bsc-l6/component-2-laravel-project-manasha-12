@@ -50,7 +50,7 @@ class ModuleController extends Controller
             abort(403, 'You are not assigned to this module.');
         }
 
-        // Load module with students
+        // ✅ FIX: Load enrollments and filter out those without students
         $module->load([
             'activeEnrollments.student',
             'enrollments' => function ($query) {
@@ -58,21 +58,34 @@ class ModuleController extends Controller
             }
         ]);
 
-        // Get active and completed enrollments separately
-        $activeEnrollments = $module->activeEnrollments;
-        $completedEnrollments = $module->enrollments->where('status', 'completed');
+        // ✅ FIX: Filter out enrollments where student is null (deleted students)
+        $activeEnrollments = $module->activeEnrollments->filter(function ($enrollment) {
+            return $enrollment->student !== null;
+        });
+
+        $completedEnrollments = $module->enrollments
+            ->where('status', 'completed')
+            ->filter(function ($enrollment) {
+                return $enrollment->student !== null;
+            });
 
         // Statistics
         $stats = [
-            'total_students' => $module->enrollments()->count(),
+            'total_students' => $module->enrollments()->whereHas('student')->count(),
             'active_students' => $activeEnrollments->count(),
             'completed_students' => $completedEnrollments->count(),
-            'passed_students' => $completedEnrollments->where('pass_status', 'pass')->count(),
-            'failed_students' => $completedEnrollments->where('pass_status', 'fail')->count(),
-            'pass_rate' => $completedEnrollments->count() > 0 
-                ? round(($completedEnrollments->where('pass_status', 'pass')->count() / $completedEnrollments->count()) * 100, 1)
-                : 0,
+            'passed_students' => $completedEnrollments->filter(function($enrollment) {
+                return strtoupper(trim($enrollment->pass_status ?? '')) === 'PASS';
+            })->count(),
+            'failed_students' => $completedEnrollments->filter(function($enrollment) {
+                return strtoupper(trim($enrollment->pass_status ?? '')) === 'FAIL';
+            })->count(),
         ];
+
+        // Calculate pass rate
+        $stats['pass_rate'] = $completedEnrollments->count() > 0 
+            ? round(($stats['passed_students'] / $completedEnrollments->count()) * 100, 1)
+            : 0;
 
         return view('teacher.modules.show', compact('module', 'activeEnrollments', 'completedEnrollments', 'stats'));
     }
@@ -92,6 +105,11 @@ class ModuleController extends Controller
         // Verify enrollment belongs to this module
         if ($enrollment->module_id !== $module->id) {
             abort(404, 'Enrollment not found for this module.');
+        }
+
+        // ✅ FIX: Check if student exists
+        if (!$enrollment->student) {
+            return back()->with('error', 'Student not found. They may have been removed from the system.');
         }
 
         // Verify enrollment is active
@@ -156,12 +174,19 @@ class ModuleController extends Controller
         ]);
 
         $graded = 0;
+        $skipped = 0;
 
         foreach ($request->enrollments as $enrollmentId => $grade) {
-            $enrollment = Enrollment::find($enrollmentId);
+            $enrollment = Enrollment::with('student')->find($enrollmentId);
 
             // Verify enrollment exists and belongs to this module
             if (!$enrollment || $enrollment->module_id !== $module->id) {
+                continue;
+            }
+
+            // ✅ FIX: Skip if student is null
+            if (!$enrollment->student) {
+                $skipped++;
                 continue;
             }
 
@@ -180,9 +205,13 @@ class ModuleController extends Controller
         }
 
         if ($graded > 0) {
-            return back()->with('success', "Successfully graded {$graded} student(s).");
+            $message = "Successfully graded {$graded} student(s).";
+            if ($skipped > 0) {
+                $message .= " {$skipped} enrollment(s) skipped (students removed).";
+            }
+            return back()->with('success', $message);
         }
 
-        return back()->with('error', 'No students were graded. They may have already been evaluated.');
+        return back()->with('error', 'No students were graded. They may have already been evaluated or removed.');
     }
 }
