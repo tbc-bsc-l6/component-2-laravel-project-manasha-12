@@ -148,8 +148,23 @@
                     </div>
                     <h3 style="font-family: 'Playfair Display', serif; font-size: 1.75rem; font-weight: 700; color: #1a1a1a; margin-bottom: 0.75rem;">Connect to Google Calendar</h3>
                     <p style="color: #6b7280; font-size: 1rem; margin-bottom: 2.5rem; font-family: 'Inter', sans-serif;">Sign in with your Google account to sync events with your calendar</p>
-                    <div id="googleSignInButton"></div>
-                    <p style="margin-top: 1.5rem; font-size: 0.875rem; color: #9ca3af; font-family: 'Inter', sans-serif;">Your calendar data is securely synced with Google</p>
+                    <div style="display: flex; justify-content: center; margin-bottom: 2rem;">
+                        <div id="googleSignInButton"></div>
+                    </div>
+                    <!-- Security Info Box -->
+                    <div style="background-color: #d1fae5; border: 1px solid #86efac; border-radius: 0.75rem; padding: 1.25rem; max-width: 500px; margin: 0 auto;">
+                        <div style="display: flex; align-items: start; gap: 0.875rem;">
+                            <div style="flex-shrink: 0; width: 24px; height: 24px; background-color: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: 0.125rem;">
+                                <svg style="width: 14px; height: 14px; color: white;" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div style="flex: 1;">
+                                <p style="font-size: 0.9375rem; color: #065f46; font-weight: 600; margin: 0 0 0.375rem 0; font-family: 'Inter', sans-serif;">Secure & Private</p>
+                                <p style="font-size: 0.875rem; color: #047857; margin: 0; font-family: 'Inter', sans-serif; line-height: 1.5;">Your calendar data is securely synced with Google. We never store your credentials.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Calendar Section (Hidden until signed in) -->
