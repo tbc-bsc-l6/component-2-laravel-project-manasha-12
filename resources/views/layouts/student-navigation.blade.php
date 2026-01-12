@@ -126,6 +126,7 @@
                                 @csrf
                                 <button type="submit"
                                     style="display: flex; align-items: center; width: 100%; text-align: left; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #ef4444; background: none; border: none; cursor: pointer; border-radius: 0.375rem; transition: background-color 0.15s;"
+                                    onsubmit="markLogout()"
                                     onmouseover="this.style.backgroundColor='#fef2f2'"
                                     onmouseout="this.style.backgroundColor='transparent'">
                                     <svg style="width: 16px; height: 16px; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
