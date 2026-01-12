@@ -7,7 +7,7 @@ use App\Models\Admin;
 use App\Models\Teacher;
 use App\Models\Student;
 use App\Models\OldStudent;
-use App\Models\Enrollment;  // ← ADD THIS LINE
+use App\Models\Enrollment;
 use App\Models\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,66 +15,108 @@ use Illuminate\Support\Facades\Hash;
 
 class UserManagementController extends Controller
 {
-    // List all users from all tables
-    public function index()
+    // List all users from all tables with search and sort
+    public function index(Request $request)
     {
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'newest'); // Default to newest first
+
         // Get all users with their roles
-        $admins = Admin::all()->map(function($admin) {
-            return [
-                'id' => $admin->id,
-                'name' => $admin->name,
-                'email' => $admin->email,
-                'role' => 'admin',
-                'role_display' => 'Administrator',
-                'created_at' => $admin->created_at,
-                'model' => $admin
-            ];
-        });
+        $admins = Admin::when($search, function($query) use ($search) {
+                return $query->where('name', 'LIKE', "%{$search}%")
+                             ->orWhere('email', 'LIKE', "%{$search}%");
+            })
+            ->get()
+            ->map(function($admin) {
+                return [
+                    'id' => $admin->id,
+                    'name' => $admin->name,
+                    'email' => $admin->email,
+                    'role' => 'admin',
+                    'role_display' => 'Administrator',
+                    'created_at' => $admin->created_at,
+                    'model' => $admin
+                ];
+            });
 
-        $teachers = Teacher::withCount('modules')->get()->map(function($teacher) {
-            return [
-                'id' => $teacher->id,
-                'name' => $teacher->name,
-                'email' => $teacher->email,
-                'role' => 'teacher',
-                'role_display' => 'Teacher',
-                'modules_count' => $teacher->modules_count,
-                'created_at' => $teacher->created_at,
-                'model' => $teacher
-            ];
-        });
+        $teachers = Teacher::when($search, function($query) use ($search) {
+                return $query->where('name', 'LIKE', "%{$search}%")
+                             ->orWhere('email', 'LIKE', "%{$search}%");
+            })
+            ->withCount('modules')
+            ->get()
+            ->map(function($teacher) {
+                return [
+                    'id' => $teacher->id,
+                    'name' => $teacher->name,
+                    'email' => $teacher->email,
+                    'role' => 'teacher',
+                    'role_display' => 'Teacher',
+                    'modules_count' => $teacher->modules_count,
+                    'created_at' => $teacher->created_at,
+                    'model' => $teacher
+                ];
+            });
 
-        $students = Student::withCount('activeEnrollments')->get()->map(function($student) {
-            return [
-                'id' => $student->id,
-                'name' => $student->name,
-                'email' => $student->email,
-                'role' => 'student',
-                'role_display' => 'Student',
-                'enrollments_count' => $student->active_enrollments_count,
-                'created_at' => $student->created_at,
-                'model' => $student
-            ];
-        });
+        $students = Student::when($search, function($query) use ($search) {
+                return $query->where('name', 'LIKE', "%{$search}%")
+                             ->orWhere('email', 'LIKE', "%{$search}%");
+            })
+            ->withCount('activeEnrollments')
+            ->get()
+            ->map(function($student) {
+                return [
+                    'id' => $student->id,
+                    'name' => $student->name,
+                    'email' => $student->email,
+                    'role' => 'student',
+                    'role_display' => 'Student',
+                    'enrollments_count' => $student->active_enrollments_count,
+                    'created_at' => $student->created_at,
+                    'model' => $student
+                ];
+            });
 
-        $oldStudents = OldStudent::withCount('completedEnrollments')->get()->map(function($oldStudent) {
-            return [
-                'id' => $oldStudent->id,
-                'name' => $oldStudent->name,
-                'email' => $oldStudent->email,
-                'role' => 'old_student',
-                'role_display' => 'Old Student',
-                'completed_count' => $oldStudent->completed_enrollments_count,
-                'created_at' => $oldStudent->created_at,
-                'model' => $oldStudent
-            ];
-        });
+        $oldStudents = OldStudent::when($search, function($query) use ($search) {
+                return $query->where('name', 'LIKE', "%{$search}%")
+                             ->orWhere('email', 'LIKE', "%{$search}%");
+            })
+            ->withCount('completedEnrollments')
+            ->get()
+            ->map(function($oldStudent) {
+                return [
+                    'id' => $oldStudent->id,
+                    'name' => $oldStudent->name,
+                    'email' => $oldStudent->email,
+                    'role' => 'old_student',
+                    'role_display' => 'Old Student',
+                    'completed_count' => $oldStudent->completed_enrollments_count,
+                    'created_at' => $oldStudent->created_at,
+                    'model' => $oldStudent
+                ];
+            });
 
-        // Merge all users and sort by created_at
-        $allUsers = $admins->concat($teachers)->concat($students)->concat($oldStudents)
-            ->sortByDesc('created_at');
+        // Merge all users
+        $allUsers = $admins->concat($teachers)->concat($students)->concat($oldStudents);
+
+        // Apply sorting
+        $allUsers = $this->sortUsers($allUsers, $sort);
 
         return view('admin.users.index', compact('allUsers'));
+    }
+
+    /**
+     * Sort users based on selected criteria
+     */
+    private function sortUsers($users, $sortBy)
+    {
+        return match($sortBy) {
+            'newest' => $users->sortByDesc('created_at'),
+            'oldest' => $users->sortBy('created_at'),
+            'name_asc' => $users->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
+            'name_desc' => $users->sortByDesc('name', SORT_NATURAL | SORT_FLAG_CASE),
+            default => $users->sortByDesc('created_at'),
+        };
     }
 
     // Change user role

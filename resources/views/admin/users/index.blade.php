@@ -51,6 +51,79 @@
                 </div>
             </div>
 
+            <!-- Search and Filter Section -->
+            <div style="background-color: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 1.5rem;">
+                <form method="GET" action="{{ route('admin.users.index') }}">
+                    <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 1rem; align-items: end;">
+                        
+                        <!-- Search Input -->
+                        <div>
+                            <label for="search" style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+                                Search Users
+                            </label>
+                            <div style="position: relative;">
+                                <input type="text" 
+                                       name="search" 
+                                       id="search" 
+                                       value="{{ request('search') }}"
+                                       placeholder="Search by name or email..."
+                                       style="width: 100%; padding: 0.75rem 0.75rem 0.75rem 2.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                <svg style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: #9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Sort Dropdown -->
+                        <div>
+                            <label for="sort" style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+                                Sort By
+                            </label>
+                            <select name="sort" 
+                                    id="sort" 
+                                    style="padding: 0.75rem 2.5rem 0.75rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; appearance: none; background-image: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 fill=%27none%27 viewBox=%270 0 20 20%27%3e%3cpath stroke=%27%236b7280%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%271.5%27 d=%27M6 8l4 4 4-4%27/%3e%3c/svg%3e'); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em;">
+                                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest First</option>
+                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest First</option>
+                                <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Name (A-Z)</option>
+                                <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Name (Z-A)</option>
+                            </select>
+                        </div>
+
+                        <!-- Filter Button -->
+                        <button type="submit" 
+                                style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; font-weight: 500; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                            </svg>
+                            Apply
+                        </button>
+
+                        <!-- Clear Filter Button -->
+                        @if(request('search') || request('sort'))
+                            <a href="{{ route('admin.users.index') }}" 
+                               style="padding: 0.75rem 1.5rem; background-color: #f3f4f6; color: #374151; font-weight: 500; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 0.875rem; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                                Clear
+                            </a>
+                        @endif
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Info -->
+            @if(request('search'))
+                <div style="background-color: #eff6ff; border-left: 4px solid #3b82f6; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                    <p style="color: #1e40af; font-size: 0.875rem;">
+                        <strong>Search Results:</strong> Found <strong>{{ $allUsers->count() }}</strong> user(s) matching "<strong>{{ request('search') }}</strong>"
+                        @if($allUsers->count() === 0)
+                            - Try a different search term
+                        @endif
+                    </p>
+                </div>
+            @endif
+
             <!-- Users Table -->
             <div style="background-color: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                 
@@ -92,6 +165,8 @@
                                         </td>
                                         <td style="padding: 1rem; font-size: 0.875rem; color: #6b7280;">
                                             {{ $user['created_at']->format('M d, Y') }}
+                                            <br>
+                                            <span style="font-size: 0.75rem; color: #9ca3af;">{{ $user['created_at']->diffForHumans() }}</span>
                                         </td>
                                         <td style="padding: 1rem;">
                                             <button onclick="openRoleModal('{{ $user['id'] }}', '{{ $user['role'] }}', '{{ $user['name'] }}')"
@@ -106,7 +181,13 @@
                     </div>
                 @else
                     <div style="text-align: center; padding: 3rem 0;">
-                        <p style="color: #6b7280; font-size: 1.125rem;">No users found</p>
+                        <svg style="width: 64px; height: 64px; color: #d1d5db; margin: 0 auto 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        <p style="color: #6b7280; font-size: 1.125rem; margin-bottom: 0.5rem;">No users found</p>
+                        @if(request('search'))
+                            <p style="color: #9ca3af; font-size: 0.875rem;">Try adjusting your search criteria</p>
+                        @endif
                     </div>
                 @endif
 
