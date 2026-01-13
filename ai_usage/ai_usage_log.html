@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Development Log</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fafafa;
+            color: #2c3e50;
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        header {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 6px;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        
+        .search-box {
+            flex: 1;
+            max-width: 350px;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #95a5a6;
+        }
+        
+        .filter-group { display: flex; gap: 8px; }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: #5a6c7d;
+        }
+        
+        .filter-btn:hover { background: #f5f5f5; }
+        
+        .filter-btn.active {
+            background: #2c3e50;
+            color: white;
+            border-color: #2c3e50;
+        }
+        
+        .entries-count {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        
+        .log-entries {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .log-entry {
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 16px 18px;
+            transition: all 0.15s;
+        }
+        
+        .log-entry:hover {
+            border-color: #d0d0d0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #5a6c7d;
+            font-weight: 500;
+        }
+        
+        .ai-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #95a5a6;
+        }
+        
+        .log-entry[data-ai="claude"] .ai-badge::before { background: #e67e22; }
+        .log-entry[data-ai="chatgpt"] .ai-badge::before { background: #27ae60; }
+        
+        .entry-date {
+            font-size: 12px;
+            color: #95a5a6;
+        }
+        
+        .entry-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .query, .answer {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .query {
+            color: #34495e;
+            font-weight: 500;
+        }
+        
+        .answer {
+            color: #5a6c7d;
+            padding-left: 12px;
+            border-left: 2px solid #ecf0f1;
+        }
+        
+        .copy-btn {
+            margin-top: 10px;
+            padding: 7px 14px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            font-size: 12px;
+            cursor: pointer;
+            color: #5a6c7d;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            align-self: flex-start;
+        }
+        
+        .copy-btn:hover {
+            background: #f5f5f5;
+            border-color: #bbb;
+        }
+        
+        .copy-btn.copied {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        
+        .copy-btn svg { flex-shrink: 0; }
+        
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+            color: #95a5a6;
+            font-size: 13px;
+        }
+        
+        .hidden { display: none !important; }
+        
+        @media (max-width: 768px) {
+            body { padding: 20px 16px; }
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-box { max-width: 100%; }
+            .filter-group { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Development Log</h1>
+            <div class="subtitle">Laravel Student Management System • December 2025 - January 2026</div>
+        </header>
+
+        <div class="controls">
+            <input type="text" class="search-box" id="searchBox" placeholder="Search queries...">
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="claude">Claude</button>
+                <button class="filter-btn" data-filter="chatgpt">ChatGPT</button>
+            </div>
+        </div>
+
+        <div class="entries-count" id="entriesCount">Showing 103 entries</div>
+
+        <div class="log-entries" id="logEntries"></div>
+
+        <footer>
+            <p>Component 2 - Advanced Web Engineering</p>
+        </footer>
+    </div>
+
+    <script>
+        const aiLogs = [
+            // Setup & Auth
+            { ai: 'claude', date: '2025-12-17', query: 'I\'m setting up multiple authentication guards in Laravel 11 for students, teachers, and admins. How do I check which guard is currently authenticated in my middleware?', answer: 'Claude provided the syntax Auth::guard(\'teacher\')->check() for checking specific guards. I implemented this in my custom middleware to redirect users based on their guard type.' },
+            { ai: 'chatgpt', date: '2025-12-17', query: 'How do I apply middleware with a specific auth guard parameter? I need my teacher routes to use teacher guard', answer: 'ChatGPT showed me the syntax ->middleware(\'auth:teacher\') which I applied to all my teacher route groups. This solved the authentication issue I was having.' },
+            { ai: 'claude', date: '2025-12-17', query: 'I need to add a foreign key role_id to my users table that references the user_roles table. What\'s the proper Laravel migration syntax?', answer: 'Claude suggested using $table->foreignId(\'role_id\')->constrained(\'user_roles\') which I used in my migration. Also mentioned I could add ->cascadeOnDelete() if needed.' },
+            { ai: 'chatgpt', date: '2025-12-18', query: 'I installed Laravel Breeze but need to modify the routes to work with my custom teacher guard. Should I copy the breeze routes or extend them?', answer: 'ChatGPT advised me to copy the breeze authentication routes and modify the guard parameter in the middleware. I created separate teacher auth routes following this approach.' },
+            { ai: 'claude', date: '2025-12-18', query: 'In my UserFactory, how do I properly hash passwords so they work with authentication?', answer: 'Claude explained to use Hash::make(\'password\') in the factory definition. I updated all my factories (Student, Teacher, Admin) to hash passwords correctly.' },
+            
+            // Database
+            { ai: 'chatgpt', date: '2025-12-18', query: 'What\'s the syntax for creating an ENUM column in Laravel migrations? I need a status field with active/inactive/pending', answer: 'ChatGPT showed me $table->enum(\'status\', [\'active\', \'inactive\', \'pending\']). I used this for my enrollment status column.' },
+            { ai: 'claude', date: '2025-12-18', query: 'I want foreign keys to automatically delete related records when parent is deleted. What\'s the Laravel migration method for this?', answer: 'Claude provided ->constrained()->cascadeOnDelete() which I applied to all my foreign keys. This way when a module is deleted, all enrollments are automatically removed.' },
+            { ai: 'chatgpt', date: '2025-12-18', query: 'How can I create a unique constraint on two columns together? I need student_id and module_id combination to be unique', answer: 'ChatGPT explained to use $table->unique([\'student_id\', \'module_id\']). I implemented this to prevent duplicate enrollments.' },
+            { ai: 'claude', date: '2025-12-19', query: 'I have a many-to-many relationship between teachers and modules with a pivot table that stores assigned_at timestamp. How do I access this pivot data in my Teacher model?', answer: 'Claude explained to use belongsToMany with ->withPivot(\'assigned_at\') in the relationship definition. I can now access $teacher->modules->first()->pivot->assigned_at in my views.' },
+            { ai: 'chatgpt', date: '2025-12-19', query: 'I need to get all enrollments for a student through their modules. What Laravel relationship should I use?', answer: 'ChatGPT suggested hasManyThrough relationship. I implemented this but realized I actually needed a different approach for my use case, so I used whereHas instead.' },
+            
+            // Models
+            { ai: 'claude', date: '2025-12-19', query: 'In Laravel 11, what\'s the new syntax for creating an accessor to transform a model attribute? I want to uppercase all names', answer: 'Claude showed me the new Attribute::make(get: fn($value) => strtoupper($value)) syntax. I used this for formatting display names in my models.' },
+            { ai: 'chatgpt', date: '2025-12-19', query: 'What\'s the difference between $fillable and $guarded in Laravel models? Which one should I use?', answer: 'ChatGPT explained that $fillable is a whitelist (safer) and $guarded is a blacklist. I decided to use $fillable for better security in all my models.' },
+            { ai: 'claude', date: '2025-12-20', query: 'I have a hasMany relationship defined in my Module model for enrollments. How do I define the inverse relationship in the Enrollment model?', answer: 'Claude confirmed I need to use belongsTo in the Enrollment model. I added public function module() { return $this->belongsTo(Module::class); } and it works perfectly.' },
+            { ai: 'chatgpt', date: '2025-12-20', query: 'How do I create a query scope in my Student model to filter only active students? I keep writing the same where clause', answer: 'ChatGPT showed me to create scopeActive($query) method. Now I can just call Student::active()->get() which is much cleaner.' },
+            { ai: 'claude', date: '2025-12-20', query: 'I want to get a count of enrollments for each module without loading all the enrollment data. What\'s the efficient way to do this?', answer: 'Claude suggested ->withCount(\'enrollments\') which adds an enrollments_count attribute. I used this in my teacher dashboard to show enrollment statistics.' },
+            
+            // Controllers
+            { ai: 'chatgpt', date: '2025-12-20', query: 'I need soft deletes functionality for my Student model so deleted students aren\'t permanently removed. How do I set this up?', answer: 'ChatGPT explained to add the SoftDeletes trait to the model and $table->softDeletes() in migration. I implemented this for better data management.' },
+            { ai: 'claude', date: '2025-12-21', query: 'How does route model binding work in Laravel? My controller method has Module $module parameter and it\'s automatically finding the record', answer: 'Claude explained Laravel auto-injects models when type-hinted in controller methods. I\'m using this throughout my project for cleaner code.' },
+            { ai: 'chatgpt', date: '2025-12-21', query: 'I want to validate form data in a separate class instead of in my controller. What\'s the Laravel way to do this?', answer: 'ChatGPT told me to create a FormRequest class with php artisan make:request and define validation rules there. I created several for different forms.' },
+            { ai: 'claude', date: '2025-12-21', query: 'After processing a form, I want to redirect back with a success message. What\'s the syntax for this?', answer: 'Claude provided return redirect()->back()->with(\'success\', \'Message\'). I\'m using this pattern throughout my controllers.' },
+            { ai: 'chatgpt', date: '2025-12-21', query: 'How do I handle file uploads in Laravel? I need to store uploaded profile pictures', answer: 'ChatGPT showed me $request->file(\'field\')->store(\'path\'). I implemented this for student profile pictures in the storage/app/public directory.' },
+            
+            // Queries
+            { ai: 'claude', date: '2025-12-22', query: 'I\'m showing too many records on one page. How do I implement pagination in Laravel?', answer: 'Claude explained Model::paginate(15) returns a paginator. I added this to my index methods and used {{ $records->links() }} in views.' },
+            { ai: 'chatgpt', date: '2025-12-22', query: 'How do I get the currently authenticated user in my controller methods?', answer: 'ChatGPT showed me three ways: Auth::user(), auth()->user(), or $request->user(). I\'m using Auth::user() consistently.' },
+            { ai: 'claude', date: '2025-12-22', query: 'I need to filter modules that have at least one active enrollment. How do I query a relationship in the where clause?', answer: 'Claude suggested ->whereHas(\'enrollments\', fn($q) => $q->where(\'status\', \'active\')). I used this to show only active modules in student view.' },
+            { ai: 'chatgpt', date: '2025-12-22', query: 'How do I attach multiple IDs to a many-to-many relationship at once?', answer: 'ChatGPT explained ->attach([id1, id2]) or ->sync([ids]) to replace all. I used sync() when assigning teachers to modules.' },
+            { ai: 'claude', date: '2025-12-23', query: 'I want to get a count of students grouped by their enrollment status. How do I do this with query builder?', answer: 'Claude provided ->groupBy(\'status\')->selectRaw(\'status, count(*) as total\'). I used this for generating statistics in admin dashboard.' },
+            
+            // Eager Loading
+            { ai: 'chatgpt', date: '2025-12-23', query: 'My page is making too many database queries (N+1 problem). How do I fix this?', answer: 'ChatGPT explained to use eager loading with ->with(\'relationName\'). I added this to all my queries and reduced query count significantly.' },
+            { ai: 'claude', date: '2025-12-23', query: 'How do I join two tables in Laravel query builder? I need data from modules and teachers tables', answer: 'Claude showed me ->join(\'table\', \'table1.id\', \'=\', \'table2.foreign_id\') syntax. I used this for complex reporting queries.' },
+            { ai: 'chatgpt', date: '2025-12-23', query: 'I need to create a record if it doesn\'t exist, or just return it if it does. Is there a Laravel method for this?', answer: 'ChatGPT explained firstOrCreate([\'email\' => $email], [\'other\' => $val]). Perfect for ensuring unique records without errors.' },
+            { ai: 'claude', date: '2025-12-24', query: 'Similar to firstOrCreate, but I want to update the record if it exists. What method should I use?', answer: 'Claude suggested updateOrCreate([\'unique\'], [\'attributes\']). I used this for updating student profiles.' },
+            { ai: 'chatgpt', date: '2025-12-24', query: 'How do I get just an array of values from a single column instead of full model objects?', answer: 'ChatGPT showed me ->pluck(\'name\') which returns a collection of values. Very useful for dropdowns and select lists.' },
+            
+            // Validation
+            { ai: 'claude', date: '2025-12-24', query: 'I want to check if a record exists before inserting to avoid duplicates. What\'s the cleanest way?', answer: 'Claude explained Model::where(...)->exists() returns boolean. I use this check before creating new enrollments.' },
+            { ai: 'chatgpt', date: '2025-12-24', query: 'I need to execute raw SQL for a complex query. How do I do this safely with parameter binding?', answer: 'ChatGPT showed me DB::select(\'SELECT * FROM table WHERE col = ?\', [$val]). The ? prevents SQL injection.' },
+            { ai: 'claude', date: '2025-12-25', query: 'In my Blade template, how do I show content only for authenticated users with a specific guard?', answer: 'Claude explained @auth(\'teacher\') ... @endauth directive. I used this for conditional navigation menu items.' },
+            { ai: 'chatgpt', date: '2025-12-25', query: 'When looping through records in Blade, how do I access the current index or check if it\'s the first item?', answer: 'ChatGPT told me about $loop variable: $loop->index, $loop->first, $loop->last. Very useful for styling alternate rows.' },
+            { ai: 'claude', date: '2025-12-25', query: 'How do I display validation errors for a specific field in my Blade form?', answer: 'Claude showed @error(\'field\') {{ $message }} @enderror. I added this below each form input for better UX.' },
+            
+            // Blade
+            { ai: 'chatgpt', date: '2025-12-25', query: 'When a form fails validation, how do I repopulate the form with the user\'s input?', answer: 'ChatGPT explained value="{{ old(\'field\', $default) }}". Old() retrieves previous input after validation failure.' },
+            { ai: 'claude', date: '2025-12-26', query: 'I need to add a CSS class conditionally based on a variable. What\'s the Blade syntax for this?', answer: 'Claude suggested class="{{ $condition ? \'class1\' : \'class2\' }}". I use this for active menu items and status badges.' },
+            { ai: 'chatgpt', date: '2025-12-26', query: 'How do I format dates in Blade templates? I want to show "5 days ago" style dates', answer: 'ChatGPT explained {{ $date->format(\'Y-m-d\') }} for custom format or $date->diffForHumans() for relative time.' },
+            { ai: 'claude', date: '2025-12-26', query: 'I have a partial view that I want to reuse. How do I include it and pass data to it?', answer: 'Claude showed @include(\'view.name\', [\'var\' => $value]). I created several partials for common UI elements.' },
+            { ai: 'chatgpt', date: '2025-12-26', query: 'How do I create a Blade component with props? I want to make a reusable card component', answer: 'ChatGPT explained to define @props([\'title\']) at component top. I created several components for consistent UI.' },
+            { ai: 'claude', date: '2025-12-27', query: 'I need to validate that an email is unique in the database. What validation rule should I use?', answer: 'Claude provided Rule::unique(\'table\', \'column\'). I used this for email uniqueness in registration.' },
+            
+            // Form Validation
+            { ai: 'chatgpt', date: '2025-12-27', query: 'When updating a user, I want the unique validation to ignore the current user\'s email. How do I do this?', answer: 'ChatGPT showed Rule::unique(\'users\')->ignore($user->id). This prevents the "email already taken" error when saving existing records.' },
+            { ai: 'claude', date: '2025-12-27', query: 'I have a field that\'s only required when another field has a specific value. What\'s the validation syntax?', answer: 'Claude explained \'field\' => \'required_if:other_field,value\'. Used this for conditional enrollment requirements.' },
+            { ai: 'chatgpt', date: '2025-12-27', query: 'How do I validate an array of inputs? My form has dynamic fields that I need to validate', answer: 'ChatGPT showed \'items.*\' => \'required|string\' which validates each array item. Perfect for multiple enrollment selections.' },
+            { ai: 'claude', date: '2025-12-28', query: 'I want custom validation error messages instead of Laravel\'s defaults. Where do I define these?', answer: 'Claude explained to add messages() method in FormRequest class. I customized all my validation messages for better clarity.' },
+            { ai: 'chatgpt', date: '2025-12-28', query: 'How do I validate uploaded file types? I only want to accept PDF, JPG, and PNG', answer: 'ChatGPT showed \'file\' => \'mimes:pdf,jpg,png\'. Added this to profile picture upload validation.' },
+            
+            // Advanced Validation
+            { ai: 'claude', date: '2025-12-28', query: 'Can I combine multiple validation rules for a single field? I need required, string, and max length', answer: 'Claude confirmed I can use array syntax: [\'required\', \'string\', \'max:255\']. Cleaner than pipe separator for complex rules.' },
+            { ai: 'chatgpt', date: '2025-12-28', query: 'I need to add custom validation logic that runs after the standard validation. How do I do this?', answer: 'ChatGPT explained $validator->after(function($validator) { ... }). Used this for complex business logic validation.' },
+            { ai: 'claude', date: '2025-12-29', query: 'What are polymorphic relationships and when should I use them? I saw them in Laravel docs', answer: 'Claude explained morphTo() on child and morphMany() on parent for one model related to multiple models. Decided not to use it for my simple project.' },
+            { ai: 'chatgpt', date: '2025-12-29', query: 'How do I handle many-to-many polymorphic relationships in Laravel?', answer: 'ChatGPT explained morphToMany() and morphedByMany(). Too complex for my current needs but good to know for future.' },
+            { ai: 'claude', date: '2025-12-29', query: 'Can I add conditions when eager loading relationships? I only want active enrollments', answer: 'Claude showed ->with([\'enrollments\' => fn($q) => $q->where(\'status\', \'active\')]). Used this throughout my project.' },
+            
+            // Conditional Loading
+            { ai: 'chatgpt', date: '2025-12-29', query: 'How do I conditionally load a relationship only when a certain condition is true?', answer: 'ChatGPT explained ->when($condition, fn($q) => $q->with(\'relation\')). Useful for optional data loading.' },
+            { ai: 'claude', date: '2025-12-30', query: 'My pivot table has created_at and updated_at columns. How do I enable timestamps for the pivot?', answer: 'Claude said to add ->withTimestamps() to belongsToMany definition. Now my teacher-module assignments track when they were made.' },
+            { ai: 'chatgpt', date: '2025-12-30', query: 'How do I access custom columns in my pivot table? I stored a status field', answer: 'ChatGPT explained $model->pivot->column_name accesses pivot data. I can now show assignment status in my views.' },
+            { ai: 'claude', date: '2025-12-30', query: 'I need to update pivot table data without detaching and reattaching. How do I do this?', answer: 'Claude showed ->updateExistingPivot($id, [\'col\' => \'val\']). Used this to update teacher assignment dates.' },
+            { ai: 'chatgpt', date: '2025-12-30', query: 'How do I remove specific records from a many-to-many relationship?', answer: 'ChatGPT explained ->detach([id1, id2]) for specific records or ->detach() to remove all. Used for unassigning teachers.' },
+            { ai: 'claude', date: '2025-12-31', query: 'I\'m getting "Call to undefined method" error. How do I debug this?', answer: 'Claude advised to check if method exists in model or trait, and verify use statements. Found I was calling wrong method name.' },
+            
+            // Debugging
+            { ai: 'chatgpt', date: '2025-12-31', query: 'Error says "Class not found" but I know the class exists. What could be wrong?', answer: 'ChatGPT suggested checking namespace and use statement at top of file. I had wrong namespace in my custom middleware.' },
+            { ai: 'claude', date: '2025-12-31', query: 'Getting "Trying to get property of non-object" error. How do I handle null values safely?', answer: 'Claude suggested optional() helper or null coalescing operator. I added checks throughout my code for deleted relationships.' },
+            { ai: 'chatgpt', date: '2025-12-31', query: 'My form isn\'t submitting - getting CSRF token mismatch error. What\'s wrong?', answer: 'ChatGPT reminded me to add @csrf in every form. I had forgotten it in one of my forms.' },
+            { ai: 'claude', date: '2026-01-01', query: 'Blade error "Undefined variable" even though I\'m sure I passed it. What am I missing?', answer: 'Claude explained to check controller return statement: return view(\'name\', [\'var\' => $value]). I was missing one variable.' },
+            { ai: 'chatgpt', date: '2026-01-01', query: 'Getting 404 error "Route not found" but the route is definitely in web.php. Why?', answer: 'ChatGPT suggested running php artisan route:clear. Route cache was outdated after I made changes.' },
+            
+            // Errors
+            { ai: 'claude', date: '2026-01-01', query: 'Database error: "Foreign key constraint fails". What does this mean?', answer: 'Claude explained parent record must exist before creating child. I was trying to enroll in a deleted module.' },
+            { ai: 'chatgpt', date: '2026-01-01', query: 'Getting 405 Method Not Allowed error. My form isn\'t working', answer: 'ChatGPT reminded me form method must match route definition (GET/POST/PUT/DELETE). I had wrong method in form tag.' },
+            { ai: 'claude', date: '2026-01-02', query: 'How do I temporarily store data in the session that\'s only available for the next request?', answer: 'Claude explained session()->flash(\'key\', \'value\') for flash data. Perfect for success/error messages.' },
+            { ai: 'chatgpt', date: '2026-01-02', query: 'How do I retrieve data from the session in my controller?', answer: 'ChatGPT showed session(\'key\') or $request->session()->get(\'key\'). I use this for maintaining user preferences.' },
+            { ai: 'claude', date: '2026-01-02', query: 'What\'s the best way to check if a user is logged in before showing certain content?', answer: 'Claude suggested Auth::check() in controllers or @auth in Blade. I use both depending on context.' },
+            
+            // Auth & Sessions
+            { ai: 'chatgpt', date: '2026-01-02', query: 'How do I manually log out a user and invalidate their session?', answer: 'ChatGPT explained Auth::logout() followed by $request->session()->invalidate(). I added this to my logout controller.' },
+            { ai: 'claude', date: '2026-01-03', query: 'How does the "remember me" checkbox work in Laravel? I want to implement it', answer: 'Claude explained Auth::attempt($creds, $remember) where second param is boolean. Added this to my login form.' },
+            { ai: 'chatgpt', date: '2026-01-03', query: 'What\'s the quickest way to just get the authenticated user\'s ID?', answer: 'ChatGPT showed Auth::id() which returns just the ID. More efficient than Auth::user()->id.' },
+            { ai: 'claude', date: '2026-01-03', query: 'I need to manually log in a user after registration. How do I do this programmatically?', answer: 'Claude suggested Auth::login($user, $remember). I use this in my registration controller.' },
+            { ai: 'chatgpt', date: '2026-01-03', query: 'How do I send a password reset email link in Laravel?', answer: 'ChatGPT explained Password::sendResetLink([\'email\' => $email]). Laravel handles the whole flow automatically.' },
+            { ai: 'claude', date: '2026-01-04', query: 'I have a collection and need to remove items that don\'t meet a condition. What method should I use?', answer: 'Claude showed $collection->filter(fn($item) => $item->active). This returns a new filtered collection.' },
+            
+            // Collections
+            { ai: 'chatgpt', date: '2026-01-04', query: 'How do I transform all items in a collection to extract just one property?', answer: 'ChatGPT explained $collection->map(fn($item) => $item->name). I use this for building select option arrays.' },
+            { ai: 'claude', date: '2026-01-04', query: 'I want to organize my collection by a category field. How do I group items?', answer: 'Claude suggested $collection->groupBy(\'category\'). This creates nested arrays grouped by the key.' },
+            { ai: 'chatgpt', date: '2026-01-04', query: 'How do I sort a collection by a specific attribute?', answer: 'ChatGPT showed $collection->sortBy(\'name\') for ascending or ->sortByDesc() for descending. Used this for ordered lists.' },
+            { ai: 'claude', date: '2026-01-05', query: 'What\'s the best way to check if my collection has any items?', answer: 'Claude explained $collection->isEmpty() or ->isNotEmpty(). More semantic than checking count.' },
+            { ai: 'chatgpt', date: '2026-01-05', query: 'How do I get just the first item from a collection, or first that matches a condition?', answer: 'ChatGPT showed $collection->first() or ->first(fn($item) => condition). Returns null if not found.' },
+            
+            // Database Operations
+            { ai: 'claude', date: '2026-01-05', query: 'I have several database operations that should all succeed or all fail. How do I handle this?', answer: 'Claude explained DB::transaction(fn() => {...}) which auto-rolls back on exception. Perfect for enrollment process.' },
+            { ai: 'chatgpt', date: '2026-01-05', query: 'How do I convert a collection back to a regular PHP array?', answer: 'ChatGPT suggested $collection->toArray() or ->all(). Needed this for JSON response.' },
+            { ai: 'claude', date: '2026-01-06', query: 'Can I manually control database transactions? I need more control than the automatic closure', answer: 'Claude showed DB::beginTransaction(), DB::commit(), DB::rollBack(). Used this for complex multi-step operations.' },
+            { ai: 'chatgpt', date: '2026-01-06', query: 'How do I insert a record and immediately get the auto-incremented ID back?', answer: 'ChatGPT explained DB::table(\'users\')->insertGetId([...]). Useful when I need the ID right away.' },
+            { ai: 'claude', date: '2026-01-06', query: 'I need to insert multiple records at once. What\'s the efficient way to do bulk inserts?', answer: 'Claude suggested Model::insert([array of records]). Much faster than looping with create().' },
+            { ai: 'chatgpt', date: '2026-01-07', query: 'How do I update multiple records that match a condition?', answer: 'ChatGPT showed Model::where(...)->update([\'col\' => \'val\']). I use this for bulk status updates.' },
+            
+            // Bulk Operations
+            { ai: 'claude', date: '2026-01-07', query: 'What\'s the syntax for deleting multiple records? I need to remove old enrollments', answer: 'Claude explained Model::where(...)->delete() or Model::destroy([array of ids]). I use both methods.' },
+            { ai: 'chatgpt', date: '2026-01-07', query: 'How do I increment a counter column without loading the model? For view counts', answer: 'ChatGPT showed ->increment(\'views\') or ->increment(\'views\', 5) for specific amount. Very efficient.' },
+            { ai: 'claude', date: '2026-01-07', query: 'Similar to increment, but for reducing a value. How do I decrement a column?', answer: 'Claude suggested ->decrement(\'stock\', 1). I use this for managing available module slots.' },
+            { ai: 'chatgpt', date: '2026-01-08', query: 'I want to write tests but need a fresh database for each test. How do I set this up?', answer: 'ChatGPT explained to use RefreshDatabase trait in test class. This migrates and cleans up automatically.' },
+            { ai: 'claude', date: '2026-01-08', query: 'How do I create fake data for testing? I need students and modules', answer: 'Claude said to use factories with php artisan make:factory. I created factories for all my models.' },
+            
+            // Testing
+            { ai: 'chatgpt', date: '2026-01-08', query: 'In my factory, how do I create related models? Like a student with enrollments', answer: 'ChatGPT showed Model::factory()->has(Related::factory())->create(). Very useful for complex test data.' },
+            { ai: 'claude', date: '2026-01-08', query: 'How do I simulate being logged in as a specific user during a test?', answer: 'Claude explained $this->actingAs($user)->get(\'/route\'). I use this in all my authenticated tests.' },
+            { ai: 'chatgpt', date: '2026-01-09', query: 'How do I verify that a record exists in the database during a test?', answer: 'ChatGPT showed $this->assertDatabaseHas(\'table\', [\'col\' => \'val\']). Essential for testing CRUD operations.' },
+            { ai: 'claude', date: '2026-01-09', query: 'What\'s the assertion for checking HTTP response status in tests?', answer: 'Claude suggested $response->assertStatus(200) or shortcuts like ->assertOk(), ->assertCreated(). I use these extensively.' },
+            { ai: 'chatgpt', date: '2026-01-09', query: 'How do I test that validation errors are returned for invalid form data?', answer: 'ChatGPT explained $response->assertSessionHasErrors([\'field\']). I test all my validation rules this way.' },
+            { ai: 'claude', date: '2026-01-09', query: 'I need to mock a model in my test. What\'s the Laravel way to do this?', answer: 'Claude suggested Mockery::mock(Model::class) but said I usually don\'t need it with factories. I ended up using factories instead.' },
+            
+            // Google Calendar
+            { ai: 'chatgpt', date: '2026-01-10', query: 'How do I integrate Google OAuth in Laravel? I need to add Google Calendar sync', answer: 'ChatGPT recommended installing Laravel Socialite with composer require laravel/socialite. I set this up following the docs.' },
+            { ai: 'claude', date: '2026-01-10', query: 'Where do I put my Google OAuth credentials? I got them from Google Console', answer: 'Claude explained to add them in config/services.php under \'google\' key. Also added to .env file for security.' },
+            { ai: 'chatgpt', date: '2026-01-10', query: 'How do I redirect users to Google for authentication?', answer: 'ChatGPT showed Socialite::driver(\'google\')->redirect(). I created a route that triggers this.' },
+            { ai: 'claude', date: '2026-01-10', query: 'After Google redirects back, how do I get the user data and token?', answer: 'Claude explained $user = Socialite::driver(\'google\')->user(). This gives me access token and user info.' },
+            { ai: 'chatgpt', date: '2026-01-11', query: 'I need to save the Google OAuth token to database. Should I encrypt it?', answer: 'ChatGPT strongly recommended encrypting with Crypt::encryptString($token) and decrypt when using. I implemented this for security.' },
+            
+            // API Integration
+            { ai: 'claude', date: '2026-01-11', query: 'How do I make API requests to Google Calendar using the saved token?', answer: 'Claude explained to add Authorization: Bearer {token} header to HTTP requests. I use Guzzle for this.' },
+            { ai: 'chatgpt', date: '2026-01-11', query: 'Google tokens expire after an hour. How do I refresh them without user interaction?', answer: 'ChatGPT explained to save refresh_token and use it to get new access_token when expired. I implemented automatic refresh.' },
+            { ai: 'claude', date: '2026-01-11', query: 'What\'s the best way to store sensitive configuration data in Laravel?', answer: 'Claude reminded me to use .env file and never commit tokens to git. I added sensitive keys to .gitignore.' },
+            { ai: 'chatgpt', date: '2026-01-12', query: 'How do I run only specific test files instead of all tests?', answer: 'ChatGPT showed php artisan test tests/Feature/TestFile.php. Much faster during development.' },
+            { ai: 'claude', date: '2026-01-12', query: 'In my factory, I want to create different variations (like active vs inactive). How do I do this?', answer: 'Claude explained to create state methods: public function active() { return $this->state(...); }. I created several states.' },
+            
+            // Final Testing
+            { ai: 'chatgpt', date: '2026-01-12', query: 'How do I run database seeders during testing?', answer: 'ChatGPT showed $this->seed() for all seeders or $this->seed(SeederClass::class) for specific. Useful for integration tests.' },
+            { ai: 'claude', date: '2026-01-12', query: 'What\'s the assertion to check if a response redirects to a specific route?', answer: 'Claude suggested $response->assertRedirect(route(\'name\')). I use this to test post-action redirects.' },
+            { ai: 'chatgpt', date: '2026-01-13', query: 'I\'m using SQLite for testing but getting "ENUM not supported" error. How do I fix this?', answer: 'ChatGPT explained SQLite doesn\'t support ENUM - I should use string columns instead or accept the values in model. I changed my migration.' },
+            { ai: 'claude', date: '2026-01-13', query: 'Getting "Table already exists" error in tests. I think I have duplicate migration files', answer: 'Claude advised to check for duplicate migrations with same table name. I found two migrations creating user_roles table.' },
+            { ai: 'chatgpt', date: '2026-01-13', query: 'Should I use :memory: for test database or an actual SQLite file?', answer: 'ChatGPT explained :memory: is faster but some features don\'t work. I switched to a file-based test database.' },
+            { ai: 'claude', date: '2026-01-13', query: 'How do I assert that a session contains a success message after an action?', answer: 'Claude showed $response->assertSessionHas(\'success\', \'message\'). I test this on all CRUD operations.' },
+            { ai: 'chatgpt', date: '2026-01-13', query: 'My model doesn\'t have factory() method available. What am I missing?', answer: 'ChatGPT reminded me to add use HasFactory trait to the model. I was missing it in one model.' },
+            { ai: 'claude', date: '2026-01-13', query: 'PHPDoc type hints not working in tests. How do I fix IDE autocompletion?', answer: 'Claude suggested /** @var Model $var */ before the variable. I added these throughout my tests for better IDE support.' },
+            { ai: 'chatgpt', date: '2026-01-13', query: 'Database constraint violation: ENUM check failed. What does this mean?', answer: 'ChatGPT explained the value I\'m inserting doesn\'t match any ENUM option exactly (case-sensitive). I was using lowercase instead of uppercase.' }
+        ];
+
+        const logEntriesContainer = document.getElementById('logEntries');
+        const searchBox = document.getElementById('searchBox');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const entriesCount = document.getElementById('entriesCount');
+
+        function renderEntries(entries) {
+            logEntriesContainer.innerHTML = '';
+            entries.forEach(log => {
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                entry.setAttribute('data-ai', log.ai);
+                entry.innerHTML = `
+                    <div class="entry-header">
+                        <div class="ai-badge">${log.ai === 'claude' ? 'Claude AI' : 'ChatGPT'}</div>
+                        <div class="entry-date">${log.date}</div>
+                    </div>
+                    <div class="entry-content">
+                        <div class="query">${log.query}</div>
+                        <div class="answer">${log.answer}</div>
+                        <button class="copy-btn" data-text="${log.query.replace(/"/g, '&quot;')}">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            Copy Query
+                        </button>
+                    </div>
+                `;
+                logEntriesContainer.appendChild(entry);
+            });
+            updateCount();
+        }
+
+        function updateCount() {
+            const visible = document.querySelectorAll('.log-entry:not(.hidden)').length;
+            entriesCount.textContent = `Showing ${visible} of ${aiLogs.length} entries`;
+        }
+
+        function filterEntries(filter) {
+            const entries = document.querySelectorAll('.log-entry');
+            entries.forEach(entry => {
+                if (filter === 'all' || entry.getAttribute('data-ai') === filter) {
+                    entry.classList.remove('hidden');
+                } else {
+                    entry.classList.add('hidden');
+                }
+            });
+            updateCount();
+        }
+
+        function searchEntries(query) {
+            const entries = document.querySelectorAll('.log-entry');
+            const searchTerm = query.toLowerCase();
+            entries.forEach(entry => {
+                const text = entry.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    entry.classList.remove('hidden');
+                } else {
+                    entry.classList.add('hidden');
+                }
+            });
+            updateCount();
+        }
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                const filter = this.getAttribute('data-filter');
+                searchBox.value = '';
+                filterEntries(filter);
+            });
+        });
+
+        searchBox.addEventListener('input', function() {
+            searchEntries(this.value);
+        });
+
+        logEntriesContainer.addEventListener('click', function(e) {
+            if (e.target.closest('.copy-btn')) {
+                const btn = e.target.closest('.copy-btn');
+                const text = btn.getAttribute('data-text');
+                
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalHTML = btn.innerHTML;
+                    btn.classList.add('copied');
+                    btn.innerHTML = `
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Copied!
+                    `;
+                    
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        btn.innerHTML = originalHTML;
+                    }, 2000);
+                });
+            }
+        });
+
+        renderEntries(aiLogs);
+    </script>
+</body>
+</html>
