@@ -116,9 +116,31 @@ class ModuleController extends Controller
     // Show module details with enrollments
     public function show(Module $module)
     {
-        $module->load(['activeEnrollments.student', 'teachers']);
+        //  Load both active and completed enrollments with students
+        $module->load([
+            'activeEnrollments.student', 
+            'completedEnrollments.student',
+            'teachers'
+        ]);
+        
+        //  Filter out enrollments with null students (deleted students)
+        $activeEnrollments = $module->activeEnrollments->filter(function ($enrollment) {
+            return $enrollment->student !== null;
+        });
+
+        $completedEnrollments = $module->completedEnrollments->filter(function ($enrollment) {
+            return $enrollment->student !== null;
+        });
+
+        // Get available teachers (not assigned to this module)
         $availableTeachers = Teacher::whereNotIn('id', $module->teachers->pluck('id'))->get();
         
-        return view('admin.modules.show', compact('module', 'availableTeachers'));
+        //  Pass both active and completed enrollments to view
+        return view('admin.modules.show', compact(
+            'module', 
+            'availableTeachers',
+            'activeEnrollments',
+            'completedEnrollments'
+        ));
     }
 }
