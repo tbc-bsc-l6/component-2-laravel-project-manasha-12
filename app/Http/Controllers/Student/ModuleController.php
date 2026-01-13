@@ -17,16 +17,10 @@ class ModuleController extends Controller
     {
         $student = Auth::guard('student')->user();
         
-        // Check current enrollments
+        // Get current enrollments count
         $currentEnrollments = Enrollment::where('student_id', $student->id)
             ->where('status', 'active')
             ->count();
-
-        // Check if student can enroll in more modules
-        if ($currentEnrollments >= 4) {
-            return redirect()->route('student.dashboard')
-                ->with('error', 'You have reached the maximum of 4 active module enrollments.');
-        }
 
         // Get currently enrolled module IDs
         $enrolledModuleIds = Enrollment::where('student_id', $student->id)
@@ -34,19 +28,17 @@ class ModuleController extends Controller
             ->pluck('module_id')
             ->toArray();
 
-        // Get available modules (not already enrolled, and available)
+        // ✅ Get ALL available modules (including full ones) that student is NOT enrolled in
+        // Don't filter by capacity - show full modules too (they'll be disabled in the view)
         $availableModules = Module::where('is_available', true)
             ->whereNotIn('id', $enrolledModuleIds)
             ->withCount('activeEnrollments')
-            ->get()
-            ->filter(function ($module) {
-                return $module->active_enrollments_count < $module->max_students;
-            });
+            ->orderBy('name')
+            ->get();
 
         $stats = [
             'current_enrollments' => $currentEnrollments,
             'available_slots' => 4 - $currentEnrollments,
-            'available_modules' => $availableModules->count(),
         ];
 
         return view('student.modules.available', compact('availableModules', 'stats'));
@@ -83,13 +75,13 @@ class ModuleController extends Controller
             return back()->with('error', 'You are already enrolled in this module.');
         }
 
-        // Check if module is full
+        // ✅ Check if module is full
         $enrollmentCount = Enrollment::where('module_id', $module->id)
             ->where('status', 'active')
             ->count();
 
         if ($enrollmentCount >= $module->max_students) {
-            return back()->with('error', 'This module is full. Maximum capacity reached.');
+            return back()->with('error', 'This module is full. Maximum capacity of ' . $module->max_students . ' students reached.');
         }
 
         // Create enrollment

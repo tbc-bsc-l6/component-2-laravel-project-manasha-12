@@ -36,8 +36,12 @@
                         <p style="font-size: 1.125rem; font-weight: 600; color: #111827;">{{ $module->code }}</p>
                     </div>
                     <div>
-                        <p style="font-size: 0.875rem; color: #6b7280;">Enrolled Students</p>
-                        <p style="font-size: 1.125rem; font-weight: 600; color: #111827;">{{ $module->activeEnrollments->count() }} / {{ $module->max_students }}</p>
+                        <p style="font-size: 0.875rem; color: #6b7280;">Active Students</p>
+                        <p style="font-size: 1.125rem; font-weight: 600; color: #111827;">{{ $activeEnrollments->count() }} / {{ $module->max_students }}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.875rem; color: #6b7280;">Completed</p>
+                        <p style="font-size: 1.125rem; font-weight: 600; color: #111827;">{{ $completedEnrollments->count() }}</p>
                     </div>
                     <div>
                         <p style="font-size: 0.875rem; color: #6b7280;">Status</p>
@@ -138,11 +142,13 @@
                 @endif
             </div>
 
-            <!-- Enrolled Students -->
-            <div style="background-color: white; border-radius: 1rem; padding: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <h3 style="font-size: 1.25rem; font-weight: 600; color: #111827; margin-bottom: 1.5rem;">Enrolled Students ({{ $module->activeEnrollments->count() }})</h3>
+            <!-- Active Enrolled Students -->
+            <div style="background-color: white; border-radius: 1rem; padding: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h3 style="font-size: 1.25rem; font-weight: 600; color: #111827; margin-bottom: 1.5rem;">
+                    Active Students ({{ $activeEnrollments->count() }})
+                </h3>
 
-                @if($module->activeEnrollments->count() > 0)
+                @if($activeEnrollments->count() > 0)
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse;">
                             <thead>
@@ -155,14 +161,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($module->activeEnrollments as $enrollment)
+                                @foreach($activeEnrollments as $enrollment)
                                     <tr style="border-bottom: 1px solid #e5e7eb;">
-                                        <td style="padding: 1rem; font-size: 0.875rem; color: #111827; font-weight: 500;">{{ $enrollment->student ? $enrollment->student->name : 'Unknown' }}</td>
-                                        <td style="padding: 1rem; font-size: 0.875rem; color: #6b7280;">{{ $enrollment->student ? $enrollment->student->email : 'N/A' }}</td>
+                                        <td style="padding: 1rem; font-size: 0.875rem; color: #111827; font-weight: 500;">{{ $enrollment->student->name }}</td>
+                                        <td style="padding: 1rem; font-size: 0.875rem; color: #6b7280;">{{ $enrollment->student->email }}</td>
                                         <td style="padding: 1rem; font-size: 0.875rem; color: #6b7280;">{{ $enrollment->enrolled_at->format('M d, Y') }}</td>
                                         <td style="padding: 1rem;">
-                                            <span style="display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; background-color: #d1fae5; color: #065f46;">
-                                                {{ ucfirst($enrollment->status) }}
+                                            <span style="display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; background-color: #dbeafe; color: #1e40af;">
+                                                In Progress
                                             </span>
                                         </td>
                                         <td style="padding: 1rem;">
@@ -181,7 +187,61 @@
                         </table>
                     </div>
                 @else
-                    <p style="color: #6b7280; text-align: center; padding: 2rem 0;">No students enrolled in this module yet.</p>
+                    <p style="color: #6b7280; text-align: center; padding: 2rem 0;">No active students enrolled in this module.</p>
+                @endif
+            </div>
+
+            <!-- Completed Enrollments -->
+            <div style="background-color: white; border-radius: 1rem; padding: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <h3 style="font-size: 1.25rem; font-weight: 600; color: #111827; margin-bottom: 1.5rem;">
+                    Completed Students ({{ $completedEnrollments->count() }})
+                </h3>
+
+                @if($completedEnrollments->count() > 0)
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background-color: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                                    <th style="padding: 0.75rem; text-align: left; font-size: 0.875rem; font-weight: 500; color: #6b7280;">Student Name</th>
+                                    <th style="padding: 0.75rem; text-align: left; font-size: 0.875rem; font-weight: 500; color: #6b7280;">Email</th>
+                                    <th style="padding: 0.75rem; text-align: left; font-size: 0.875rem; font-weight: 500; color: #6b7280;">Start Date</th>
+                                    <th style="padding: 0.75rem; text-align: left; font-size: 0.875rem; font-weight: 500; color: #6b7280;">Completion Date</th>
+                                    <th style="padding: 0.75rem; text-align: left; font-size: 0.875rem; font-weight: 500; color: #6b7280;">Result</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($completedEnrollments as $enrollment)
+                                    @php
+                                        $passStatus = strtoupper(trim($enrollment->pass_status ?? ''));
+                                        $isPassed = $passStatus === 'PASS';
+                                    @endphp
+                                    <tr style="border-bottom: 1px solid #e5e7eb;">
+                                        <td style="padding: 1rem; font-size: 0.875rem; color: #111827; font-weight: 500;">{{ $enrollment->student->name }}</td>
+                                        <td style="padding: 1rem; font-size: 0.875rem; color: #6b7280;">{{ $enrollment->student->email }}</td>
+                                        <td style="padding: 1rem; font-size: 0.875rem; color: #6b7280;">
+                                            {{ $enrollment->enrolled_at->format('M d, Y') }}
+                                        </td>
+                                        <td style="padding: 1rem; font-size: 0.875rem; color: #6b7280;">
+                                            @if($enrollment->completed_at)
+                                                {{ \Carbon\Carbon::parse($enrollment->completed_at)->format('M d, Y') }}
+                                            @else
+                                                N/A
+                                            @endif
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <span style="display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; 
+                                                        background-color: {{ $isPassed ? '#d1fae5' : '#fee2e2' }}; 
+                                                        color: {{ $isPassed ? '#065f46' : '#991b1b' }};">
+                                                {{ $isPassed ? 'PASS' : 'FAIL' }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <p style="color: #6b7280; text-align: center; padding: 2rem 0;">No completed students for this module yet.</p>
                 @endif
             </div>
 

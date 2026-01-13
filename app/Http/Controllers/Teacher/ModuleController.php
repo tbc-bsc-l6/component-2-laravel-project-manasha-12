@@ -112,9 +112,10 @@ class ModuleController extends Controller
             return back()->with('error', 'Student not found. They may have been removed from the system.');
         }
 
-        // Verify enrollment is active
+        // ✅ FIX: Verify enrollment is active BEFORE doing anything else
         if ($enrollment->status !== 'active') {
-            return back()->with('error', 'This student has already been graded.');
+            $currentGrade = strtoupper($enrollment->pass_status ?? 'N/A');
+            return back()->with('error', "This student has already been graded as {$currentGrade}.");
         }
 
         // Validate grade
@@ -135,11 +136,26 @@ class ModuleController extends Controller
             'current_pass_status' => $enrollment->pass_status,
         ]);
 
-        // Update enrollment with explicit values
+        // ✅ Update enrollment with explicit values
         $enrollment->status = 'completed';
         $enrollment->completed_at = now();
         $enrollment->pass_status = $passStatus;
-        $enrollment->save();
+        
+        try {
+            $enrollment->save();
+        } catch (\Illuminate\Database\QueryException $e) {
+            // ✅ Handle unique constraint violation
+            if ($e->getCode() === '23000') {
+                Log::error('Duplicate enrollment grading attempt', [
+                    'enrollment_id' => $enrollment->id,
+                    'student_id' => $enrollment->student_id,
+                    'module_id' => $enrollment->module_id,
+                    'error' => $e->getMessage()
+                ]);
+                return back()->with('error', 'This student has already been graded. Please refresh the page.');
+            }
+            throw $e;
+        }
 
         // Refresh from database to confirm
         $enrollment->refresh();
@@ -152,7 +168,7 @@ class ModuleController extends Controller
             'saved_completed_at' => $enrollment->completed_at,
         ]);
 
-        return back()->with('success', "Successfully marked {$student->name} as {$passStatus}. Status saved: {$enrollment->pass_status}");
+        return back()->with('success', "Successfully marked {$student->name} as {$passStatus}.");
     }
 
     /**
