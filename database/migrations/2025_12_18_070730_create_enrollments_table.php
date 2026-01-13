@@ -15,7 +15,7 @@ return new class extends Migration
             $table->timestamp('enrolled_at')->useCurrent();
             $table->timestamp('completed_at')->nullable();
             $table->enum('status', ['active', 'completed', 'dropped'])->default('active');
-            $table->enum('pass_status', ['pending', 'pass', 'fail'])->default('pending');
+            $table->enum('pass_status', ['pending', 'PASS', 'FAIL'])->default('pending');
             $table->timestamps();
             
             // Prevent duplicate active enrollments
